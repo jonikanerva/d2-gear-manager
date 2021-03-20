@@ -1,4 +1,5 @@
-node_modules
+*.js
 build
 coverage
-*.js
+data
+node_modules

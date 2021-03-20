@@ -18,5 +18,6 @@
     "typeRoots": ["node_modules/@types"],
     "types": ["node", "jest"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.json"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.json"],
+  "exclude": ["data/*"]
 }

@@ -1,4 +1,5 @@
-node_modules
-manifest.json
 build
 coverage
+data
+manifest.json
+node_modules

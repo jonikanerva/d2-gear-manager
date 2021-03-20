@@ -1,7 +1,6 @@
-### Typescript ###
+.env
 build
-manifest.json
-
-### Node ###
-node_modules
 coverage
+data
+manifest.json
+node_modules
