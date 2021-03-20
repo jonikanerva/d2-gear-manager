@@ -1,0 +1,7 @@
+### Typescript ###
+build
+manifest.json
+
+### Node ###
+node_modules
+coverage
