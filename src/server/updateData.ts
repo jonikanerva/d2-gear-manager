@@ -32,7 +32,7 @@ const storePath = ({
   path: string
 }): Promise<void> => getContent(path).then((data) => storeToFile(name, data))
 
-const callInSequence = <T>(list: T[], fnc: (arg: T) => Promise<any>) =>
+const callInSequence = <T>(list: T[], fnc: (arg: T) => Promise<void>) =>
   list.reduce((memo, item) => memo.then(() => fnc(item)), Promise.resolve())
 
 const dumpAll = () =>
