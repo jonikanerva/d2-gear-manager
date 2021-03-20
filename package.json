@@ -19,7 +19,8 @@
     "touch": "mkdir -p build && touch build/server.js",
     "watch:build": "webpack --mode development --watch",
     "webpack:client": "webpack --mode production --config-name='client'",
-    "webpack:server": "webpack --mode production --config-name='server'"
+    "webpack:server": "webpack --mode production --config-name='server'",
+    "generatetypes": "npx openapi-typescript https://raw.githubusercontent.com/Bungie-net/api/master/openapi.json --output src/bungie.ts"
   },
   "engines": {
     "node": "14.16.0"
