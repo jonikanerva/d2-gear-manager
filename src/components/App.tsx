@@ -1,49 +1,35 @@
 import React, { useEffect, useState } from 'react'
+import { Route, Switch } from 'react-router-dom'
+
 import css from './App.css'
-import { getItem, setItem } from './localStorage'
+import Auth from './Auth'
+import { getItem } from './localStorage'
 
-const loginUrl = `https://www.bungie.net/en/OAuth/Authorize?client_id=1502&response_type=code`
+const HelloWorld: React.FC = () => {
+  const loginUrl = `https://www.bungie.net/en/OAuth/Authorize?client_id=1502&response_type=code`
 
-interface Cookies {
-  name: string
-  value: string
-}
-
-const getCookies = (): Cookies[] | undefined =>
-  document.cookie === ''
-    ? undefined
-    : document.cookie.split(';').map((item) => {
-        const [cookieName, cookieValue] = item.split('=')
-
-        return { name: cookieName, value: cookieValue }
-      })
-
-const App: React.FC = () => {
-  const [cookie, setCookie] = useState<Cookies[]>()
-  const [storage, setStorage] = useState<Cookies[]>()
+  const [storage, setStorage] = useState<any>()
 
   useEffect(() => {
-    const cookies = getCookies()
-    const storages = getItem('donutVaultManager') as Cookies[]
-
-    setCookie(cookies)
-    setStorage(storages)
-
-    if (storages === null) {
-      setItem('donutVaultManager', cookies)
-    }
-  }, [])
+    setStorage(getItem('donutVaultManager'))
+  }, [setStorage])
 
   return (
     <div>
       <div className={css.header}>Hello World!</div>
+      <br />
       <a href={loginUrl}>Login</a>
-      Sulla on keksi {JSON.stringify(cookie)}
       <br />
-      Sulla on localstorage {JSON.stringify(storage)}
-      <br />
+      You have storage {JSON.stringify(storage)}
     </div>
   )
 }
+
+const App: React.FC = () => (
+  <Switch>
+    <Route path="/auth" render={() => <Auth />} />
+    <Route path="/" render={() => <HelloWorld />} />
+  </Switch>
+)
 
 export default App
