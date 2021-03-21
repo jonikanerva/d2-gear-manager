@@ -17,7 +17,7 @@ interface TokenResponse {
 
 type UserResponse = components['responses']['User.UserMembershipData']['content']['application/json']
 
-export const generateToken = (code: string): Promise<TokenResponse> =>
+const generateToken = (code: string): Promise<TokenResponse> =>
   fetch('https://www.bungie.net/Platform/App/OAuth/Token/', {
     method: 'post',
     body: `client_id=${bungieClientId}&grant_type=authorization_code&code=${code}`,
@@ -35,7 +35,7 @@ export const generateToken = (code: string): Promise<TokenResponse> =>
       expires_at: Date.now() + json.expires_in * 1000,
     }))
 
-export const getUserInfo = ({
+const getUserInfo = ({
   access_token,
   token_type,
 }: TokenResponse): Promise<UserResponse> =>
@@ -90,11 +90,11 @@ const Auth: React.FC = () => {
   }, [query, setItem])
 
   if (error === true) {
-    return <div>💩 An error occured! 💩</div>
+    return <h1>💩 An error occured! 💩</h1>
   }
 
   if (loading === true) {
-    return <div>Authentiacting with Bungie...</div>
+    return <h1>Authentiacting with Bungie...</h1>
   }
 
   return <Redirect to="/" />
