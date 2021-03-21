@@ -7,6 +7,15 @@ import { setItem } from './localStorage'
 const bungieClientId = 1502
 const bungieApiKey = '7c0484ada8a94ea2abc1bdae7cc8c0ad' // TODO 💩
 
+export interface VaultManagerStorage {
+  accessToken: string
+  tokenType: string
+  expiresAt: number
+  primaryMembershipId?: number
+  membershipId?: number
+  memberShipType?: number
+}
+
 interface TokenResponse {
   access_token: string
   token_type: string
@@ -62,28 +71,26 @@ const Auth: React.FC = () => {
       generateToken(query)
         .then((token) =>
           getUserInfo(token)
-            .then((user) => {
-              console.log('saatiin user', user)
-
-              return {
-                accessToken: token.access_token,
-                tokenType: token.token_type,
-                expiresAt: token.expires_at,
-                primaryMembershipId: user?.Response?.primaryMembershipId,
-                membershipId: user?.Response?.bungieNetUser?.membershipId,
-                memberShipType: user?.Response?.destinyMemberships?.map(
-                  ({ crossSaveOverride, membershipType }) =>
-                    crossSaveOverride ? crossSaveOverride : membershipType
-                )?.[0],
-              }
-            })
-            .then((authData) => {
+            .then((user) => ({
+              accessToken: token.access_token,
+              tokenType: token.token_type,
+              expiresAt: token.expires_at,
+              primaryMembershipId:
+                user?.Response?.primaryMembershipId || undefined,
+              membershipId: user?.Response?.bungieNetUser?.membershipId,
+              memberShipType: user?.Response?.destinyMemberships?.map(
+                ({ crossSaveOverride, membershipType }) =>
+                  crossSaveOverride ? crossSaveOverride : membershipType
+              )?.[0],
+            }))
+            .then((authData: VaultManagerStorage) => {
               setItem('donutVaultManager', authData)
               setLoading(false)
             })
         )
         .catch((error) => {
           setError(true)
+
           console.error(error)
         })
     }
