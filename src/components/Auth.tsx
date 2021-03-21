@@ -101,7 +101,7 @@ const Auth: React.FC = () => {
   }
 
   if (loading === true) {
-    return <h1>Authentiacting with Bungie...</h1>
+    return <h1>Authentiacting with Bungie... ⏳</h1>
   }
 
   return <Redirect to="/" />
