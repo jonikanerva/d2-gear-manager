@@ -1,10 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
+
 import html from '../templates/html'
 
 export const getRoot = (
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction
 ): void => {
-  res.send(html())
+  const url = req.route.path || '/'
+
+  res.send(html(url))
 }
