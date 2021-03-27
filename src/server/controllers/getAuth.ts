@@ -34,22 +34,29 @@ const convertUser = (
   console.log('token', JSON.stringify(token, null, 2))
   console.log('user', JSON.stringify(user, null, 2))
 
-  const memberShipType =
-    user?.Response?.destinyMemberships?.map(
-      ({ crossSaveOverride, membershipType }) =>
-        crossSaveOverride ? crossSaveOverride : membershipType
-    )?.[0] || 0
+  const membershipId = user?.Response?.bungieNetUser?.membershipId
+  const memberShipType = user?.Response?.destinyMemberships?.map(
+    ({ crossSaveOverride, membershipType }) =>
+      crossSaveOverride ? crossSaveOverride : membershipType
+  )?.[0]
   const primaryMembershipId =
     user?.Response?.primaryMembershipId ||
-    user?.Response?.destinyMemberships?.[0]?.membershipId ||
-    0
+    user?.Response?.destinyMemberships?.[0]?.membershipId
+
+  if (
+    membershipId === undefined ||
+    memberShipType === undefined ||
+    primaryMembershipId === undefined
+  ) {
+    throw new Error('could not fetch profile from bungie')
+  }
 
   return {
     accessToken: token.access_token,
     tokenType: token.token_type,
     expiresAt: token.expires_at,
     primaryMembershipId,
-    membershipId: user?.Response?.bungieNetUser?.membershipId || 0,
+    membershipId,
     memberShipType,
   }
 }
