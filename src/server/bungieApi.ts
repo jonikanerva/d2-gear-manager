@@ -89,7 +89,7 @@ export const getUserProfile = ({
   ].join(',')
   const url = `https://www.bungie.net/Platform/Destiny2/${memberShipType}/Profile/${primaryMembershipId}?components=${components}`
 
-  console.log('fetching profile', url)
+  console.log('Fetching ', url)
 
   return fetch(url, {
     headers: {
@@ -99,13 +99,13 @@ export const getUserProfile = ({
   })
     .then((res) => parseJsonOrThrow(res))
     .then((json: BungieProfileResponse) => {
-      console.log('saatiin response', json)
-
       const characters = json?.Response?.characters?.data || {}
       const vault = json?.Response?.profileInventory?.data || {}
       const characterInventories =
         json?.Response?.characterInventories?.data || {}
       const characterEquipment = json?.Response?.characterEquipment?.data || {}
+
+      console.log('OK')
 
       return {
         characters: parseCharacters(characters),

@@ -36,7 +36,7 @@ const parseRequest = (req: Request): Promise<ProfileRequest> => {
       primaryMembershipId,
     })
   } else {
-    console.error(req.body)
+    console.error('ERROR', req.body)
 
     throw new Error('invalid request')
   }

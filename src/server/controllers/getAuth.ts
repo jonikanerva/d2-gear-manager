@@ -18,6 +18,8 @@ export interface AuthResponse {
 const parseRequest = (req: Request): Promise<string> => {
   const code = (req.query.code || '').toString()
 
+  console.log('GET /api/auth', req.query)
+
   if (code && code.length > 1) {
     return Promise.resolve(code)
   } else {
@@ -28,18 +30,23 @@ const parseRequest = (req: Request): Promise<string> => {
 const convertUser = (
   token: BungieTokenResponse,
   user: BungieUserResponse
-): AuthResponse => ({
-  accessToken: token.access_token,
-  tokenType: token.token_type,
-  expiresAt: token.expires_at,
-  primaryMembershipId: user?.Response?.primaryMembershipId || 0,
-  membershipId: user?.Response?.bungieNetUser?.membershipId || 0,
-  memberShipType:
-    user?.Response?.destinyMemberships?.map(
-      ({ crossSaveOverride, membershipType }) =>
-        crossSaveOverride ? crossSaveOverride : membershipType
-    )?.[0] || 0,
-})
+): AuthResponse => {
+  console.log('token', JSON.stringify(token, null, 2))
+  console.log('user', JSON.stringify(user, null, 2))
+
+  return {
+    accessToken: token.access_token,
+    tokenType: token.token_type,
+    expiresAt: token.expires_at,
+    primaryMembershipId: user?.Response?.primaryMembershipId || 0,
+    membershipId: user?.Response?.bungieNetUser?.membershipId || 0,
+    memberShipType:
+      user?.Response?.destinyMemberships?.map(
+        ({ crossSaveOverride, membershipType }) =>
+          crossSaveOverride ? crossSaveOverride : membershipType
+      )?.[0] || 0,
+  }
+}
 
 export const getAuth = (
   req: Request,
