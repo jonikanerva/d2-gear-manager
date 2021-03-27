@@ -34,17 +34,23 @@ const convertUser = (
   console.log('token', JSON.stringify(token, null, 2))
   console.log('user', JSON.stringify(user, null, 2))
 
+  const memberShipType =
+    user?.Response?.destinyMemberships?.map(
+      ({ crossSaveOverride, membershipType }) =>
+        crossSaveOverride ? crossSaveOverride : membershipType
+    )?.[0] || 0
+  const primaryMembershipId =
+    user?.Response?.primaryMembershipId ||
+    user?.Response?.destinyMemberships?.[0]?.membershipId ||
+    0
+
   return {
     accessToken: token.access_token,
     tokenType: token.token_type,
     expiresAt: token.expires_at,
-    primaryMembershipId: user?.Response?.primaryMembershipId || 0,
+    primaryMembershipId,
     membershipId: user?.Response?.bungieNetUser?.membershipId || 0,
-    memberShipType:
-      user?.Response?.destinyMemberships?.map(
-        ({ crossSaveOverride, membershipType }) =>
-          crossSaveOverride ? crossSaveOverride : membershipType
-      )?.[0] || 0,
+    memberShipType,
   }
 }
 
