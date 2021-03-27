@@ -18,6 +18,8 @@ const parseRequest = (req: Request): Promise<ProfileRequest> => {
   const memberShipType = body?.memberShipType
   const primaryMembershipId = body?.primaryMembershipId
 
+  console.log('POST /api/auth', req.body)
+
   if (
     Number.isInteger(memberShipType) &&
     primaryMembershipId &&
@@ -47,7 +49,6 @@ export const postProfile = (
 ): Promise<void> =>
   parseRequest(req)
     .then((request) => getUserProfile(request))
-    .then((response: BungieProfileResponse) => response.Response)
     .then((response: ProfileResponse) => {
       res.send(response)
     })
