@@ -1,6 +1,6 @@
 import { AuthResponse } from '../server/controllers/getAuth'
 
-const storageKey = 'donutVaultManager'
+const storageKey = 'donutGearManager'
 
 export const getAuth = (): AuthResponse | null => {
   const item = window.localStorage.getItem(storageKey)

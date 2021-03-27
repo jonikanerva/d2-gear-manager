@@ -10,7 +10,7 @@ const manifest: Record<string, string> = manifestJson
 const html = (url: string): string => `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Destiny Vault Manager</title>
+  <title>Destiny Gear Manager</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link rel="stylesheet" href="/${manifest['main.css'].replace(/^auto/, '')}" />
