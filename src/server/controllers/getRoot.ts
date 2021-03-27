@@ -8,6 +8,7 @@ export const getRoot = (
   _next: NextFunction
 ): void => {
   const url = req.route.path || '/'
+  const response = html(url)
 
-  res.send(html(url))
+  res.send(response)
 }

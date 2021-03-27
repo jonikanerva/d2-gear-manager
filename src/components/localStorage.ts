@@ -1,8 +1,12 @@
-export const getItem = (id: string): unknown | null => {
-  const item = window.localStorage.getItem(id)
+import { AuthResponse } from '../server/controllers/getAuth'
+
+const storageKey = 'donutVaultManager'
+
+export const getAuth = (): AuthResponse | null => {
+  const item = window.localStorage.getItem(storageKey)
 
   return item !== null ? JSON.parse(item) : null
 }
 
-export const setItem = (id: string, value: unknown): void =>
-  window.localStorage.setItem(id, JSON.stringify(value))
+export const setAuth = (value: AuthResponse): void =>
+  window.localStorage.setItem(storageKey, JSON.stringify(value))

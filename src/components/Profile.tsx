@@ -1,65 +1,52 @@
 import React, { useEffect, useState } from 'react'
-import { getItem } from './localStorage'
-import { components } from '../bungie'
-import { VaultManagerStorage } from './Auth'
+import { ProfileResponse } from '../server/controllers/postProfile'
 
-type ProfileResponse = components['responses']['Destiny.Responses.DestinyProfileResponse']['content']['application/json']
+interface ProfileProps {
+  accessToken: string
+  tokenType: string
+  memberShipType: number
+  primaryMembershipId: number
+}
 
-const bungieApiKey = '7c0484ada8a94ea2abc1bdae7cc8c0ad' // TODO 💩
-const getUserInfo = ({
+const Profile: React.FC<ProfileProps> = ({
   accessToken,
   tokenType,
   memberShipType,
   primaryMembershipId,
-}: VaultManagerStorage): Promise<ProfileResponse> =>
-  fetch(
-    `https://www.bungie.net/Platform/Destiny2/${memberShipType}/Profile/${primaryMembershipId}?components=102,200,201,205,300,305`,
-    {
-      headers: {
-        'X-API-Key': bungieApiKey,
-        Authorization: `${tokenType} ${accessToken}`,
-      },
-    }
-  ).then((res) => {
-    if (res.ok === true) {
-      return res.json()
-    } else {
-      throw new Error('Network response was not ok')
-    }
-  })
-
-const Profile: React.FC = () => {
+}: ProfileProps) => {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<ProfileResponse>()
-  const [storage, setStorage] = useState<VaultManagerStorage>()
 
   useEffect(() => {
-    const donut = getItem('donutVaultManager') as VaultManagerStorage
-    setStorage(donut)
-  }, [])
+    fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        accessToken,
+        tokenType,
+        memberShipType,
+        primaryMembershipId,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json: ProfileResponse) => {
+        setProfile(json)
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.error(error)
 
-  useEffect(() => {
-    if (storage !== undefined) {
-      getUserInfo(storage)
-        .then((response) => {
-          setProfile(response)
-          setLoading(false)
-        })
-        .catch((error) => {
-          setError(true)
-
-          console.error(error)
-        })
-    }
-  }, [storage])
+        setError(true)
+      })
+  }, [accessToken, tokenType, memberShipType, primaryMembershipId])
 
   if (error === true) {
     return <h1>💩 An error occured! 💩</h1>
   }
 
   if (loading === true) {
-    return <h1>Loading... ⏳</h1>
+    return <h1>Loading profile... ⏳</h1>
   }
 
   return (
