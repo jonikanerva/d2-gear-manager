@@ -1,10 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
-import {
-  convertUser,
-  generateToken,
-  getUserInfo,
-} from '../../modules/bungieApi'
+import { getToken, getUserInfo } from '../../modules/bungieApi'
+import { convertUser, parseToken } from '../../modules/bungieData'
 
 export interface AuthResponse {
   accessToken: string
@@ -33,7 +30,8 @@ export const getAuth = (
   _next: NextFunction
 ): Promise<void> =>
   parseRequest(req)
-    .then((code) => generateToken(code))
+    .then((code) => getToken(code))
+    .then((json) => parseToken(json))
     .then((token) =>
       getUserInfo(token)
         .then((user) => convertUser(token, user))

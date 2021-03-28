@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { getUserProfile, BungieProfileResponse } from '../../modules/bungieApi'
+import { parseProfile } from '../../modules/bungieData'
 
 export interface ProfileRequest {
   accessToken: string
@@ -49,6 +50,7 @@ export const postProfile = (
 ): Promise<void> =>
   parseRequest(req)
     .then((request) => getUserProfile(request))
+    .then((json) => parseProfile(json))
     .then((response: ProfileResponse) => {
       res.send(response)
     })
