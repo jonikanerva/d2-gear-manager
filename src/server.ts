@@ -1,7 +1,12 @@
+import { loadDestinyData } from './database'
 import { createExpress, startService } from './server/app'
 
 const app = createExpress()
 
-startService(app).catch(() => {
-  process.exit(1)
-})
+loadDestinyData()
+  .then(() => startService(app))
+  .catch((e) => {
+    console.log(e)
+
+    process.exit(1)
+  })
