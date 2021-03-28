@@ -1,0 +1,7 @@
+{
+  "access_token": "secret_sauce",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "membership_id": "6654461",
+  "expires_at": 1616918434282
+}

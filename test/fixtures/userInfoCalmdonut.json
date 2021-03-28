@@ -1,0 +1,77 @@
+{
+  "Response": {
+    "destinyMemberships": [
+      {
+        "LastSeenDisplayName": "calmdonut",
+        "LastSeenDisplayNameType": 2,
+        "iconPath": "/img/theme/bungienet/icons/psnLogo.png",
+        "crossSaveOverride": 2,
+        "applicableMembershipTypes": [1, 5, 2],
+        "isPublic": true,
+        "membershipType": 2,
+        "membershipId": "4611686018433444841",
+        "displayName": "calmdonut"
+      },
+      {
+        "LastSeenDisplayName": "calmdonut",
+        "LastSeenDisplayNameType": 1,
+        "iconPath": "/img/theme/bungienet/icons/xboxLiveLogo.png",
+        "crossSaveOverride": 2,
+        "applicableMembershipTypes": [],
+        "isPublic": true,
+        "membershipType": 1,
+        "membershipId": "4611686018488694851",
+        "displayName": "calmdonut"
+      },
+      {
+        "LastSeenDisplayName": "calmdonut",
+        "LastSeenDisplayNameType": 5,
+        "iconPath": "/img/theme/destiny/icons/icon_stadia.png",
+        "crossSaveOverride": 2,
+        "applicableMembershipTypes": [],
+        "isPublic": true,
+        "membershipType": 5,
+        "membershipId": "4611686018495234750",
+        "displayName": "calmdonut"
+      }
+    ],
+    "primaryMembershipId": "4611686018433444841",
+    "bungieNetUser": {
+      "membershipId": "6654461",
+      "uniqueName": "6654461",
+      "displayName": "calmdonut",
+      "profilePicture": 70595,
+      "profileTheme": 68,
+      "userTitle": 0,
+      "successMessageFlags": "0",
+      "isDeleted": false,
+      "about": "",
+      "firstAccess": "2014-09-14T12:46:51.989Z",
+      "lastUpdate": "2021-02-24T07:32:22.644Z",
+      "context": {
+        "isFollowing": false,
+        "ignoreStatus": {
+          "isIgnored": false,
+          "ignoreFlags": 0
+        }
+      },
+      "psnDisplayName": "calmdonut",
+      "xboxDisplayName": "calmdonut",
+      "showActivity": true,
+      "locale": "en",
+      "localeInheritDefault": true,
+      "showGroupMessaging": true,
+      "profilePicturePath": "/img/profile/avatars/bungie_day_15_08.jpg",
+      "profileThemeName": "d2cover",
+      "userTitleDisplay": "Newbie",
+      "statusText": "Calm before the storm.",
+      "statusDate": "2015-08-25T19:48:49.763Z",
+      "stadiaDisplayName": "calmdonut"
+    }
+  },
+  "ErrorCode": 1,
+  "ThrottleSeconds": 0,
+  "ErrorStatus": "Success",
+  "Message": "Ok",
+  "MessageData": {}
+}

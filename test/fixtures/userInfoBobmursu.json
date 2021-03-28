@@ -1,0 +1,52 @@
+{
+  "Response": {
+    "destinyMemberships": [
+      {
+        "LastSeenDisplayName": "bobmursu",
+        "LastSeenDisplayNameType": 2,
+        "iconPath": "/img/theme/bungienet/icons/psnLogo.png",
+        "crossSaveOverride": 0,
+        "applicableMembershipTypes": [2],
+        "isPublic": true,
+        "membershipType": 2,
+        "membershipId": "4611686018438653031",
+        "displayName": "bobmursu"
+      }
+    ],
+    "bungieNetUser": {
+      "membershipId": "12288504",
+      "uniqueName": "12288504",
+      "displayName": "mrajala",
+      "profilePicture": 70585,
+      "profileTheme": 93,
+      "userTitle": 0,
+      "successMessageFlags": "0",
+      "isDeleted": false,
+      "about": "",
+      "firstAccess": "2015-11-23T07:38:43.906Z",
+      "lastUpdate": "2020-12-28T16:46:00.363Z",
+      "context": {
+        "isFollowing": false,
+        "ignoreStatus": {
+          "isIgnored": false,
+          "ignoreFlags": 0
+        }
+      },
+      "psnDisplayName": "bobmursu",
+      "showActivity": true,
+      "locale": "en",
+      "localeInheritDefault": true,
+      "showGroupMessaging": true,
+      "profilePicturePath": "/img/profile/avatars/e2015_13.jpg",
+      "profileThemeName": "d2cover",
+      "userTitleDisplay": "Newbie",
+      "statusText": "",
+      "statusDate": "0001-01-01T00:00:00Z"
+    }
+  },
+  "ErrorCode": 1,
+  "ThrottleSeconds": 0,
+  "ErrorStatus": "Success",
+  "Message": "Ok",
+  "MessageData": {}
+}
