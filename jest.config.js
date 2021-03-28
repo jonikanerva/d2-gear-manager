@@ -4,7 +4,7 @@ module.exports = {
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
   testMatch: ['<rootDir>/test/**/*.ts'],
   maxConcurrency: 5,
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coverageDirectory: 'coverage',
   coverageReporters: [

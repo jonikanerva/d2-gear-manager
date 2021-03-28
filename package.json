@@ -16,6 +16,7 @@
     "start": "node build/server.js",
     "s": "run-p touch watch:build nodemon",
     "test": "jest",
+    "test:coverage": "jest --coverage=true",
     "touch": "mkdir -p build && touch build/server.js",
     "watch:build": "webpack --mode development --watch",
     "webpack:client": "webpack --mode production --config-name='client'",
