@@ -42,35 +42,37 @@ const Profile: React.FC<ProfileProps> = ({
   }, [accessToken, tokenType, memberShipType, primaryMembershipId])
 
   if (error === true) {
-    return <h1>💩 An error occured! 💩</h1>
+    return <h1>💩 An error occured while fetching profile! 💩</h1>
   }
 
   if (loading === true) {
     return <h1>Loading profile... ⏳</h1>
   }
 
+  if (profile === undefined) {
+    return <h1>💩 Profile not found! 💩</h1>
+  }
+
   console.log('your profile', profile)
 
   return (
-    profile && (
-      <div>
-        <h1>Your profile</h1>
-        <h2>Characters</h2>
-        {profile.characters.map((character, key) => {
-          return (
-            <div key={key}>
-              <img src={character.emblem} />
-            </div>
-          )
-        })}
-        <h2>Equipped</h2>
-        {profile.characterEquipment.length} weapons
-        <h2>Vault</h2>
-        {profile.vault.length} weapons
-        <h2>Inventory</h2>
-        {profile.characterItems.length} weapons
-      </div>
-    )
+    <div>
+      <h1>Your profile</h1>
+      <h2>Characters</h2>
+      {profile.characters.map((character, key) => {
+        return (
+          <div key={key}>
+            <img src={character.emblem} />
+          </div>
+        )
+      })}
+      <h2>Equipped</h2>
+      {profile.characterEquipment.length} weapons
+      <h2>Vault</h2>
+      {profile.vault.length} weapons
+      <h2>Inventory</h2>
+      {profile.characterItems.length} weapons
+    </div>
   )
 }
 
