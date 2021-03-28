@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { getUserProfile, BungieProfileResponse } from '../../modules/bungieApi'
+import { getUserProfile } from '../../modules/bungieApi'
 import { parseProfile } from '../../modules/bungieData'
 
 export interface ProfileRequest {
@@ -10,7 +10,12 @@ export interface ProfileRequest {
   primaryMembershipId: string
 }
 
-export type ProfileResponse = BungieProfileResponse['Response']
+export interface ProfileResponse {
+  characters: any[]
+  vault: any[]
+  characterItems: any[]
+  characterEquipment: any[]
+}
 
 const parseRequest = (req: Request): Promise<ProfileRequest> => {
   const body: ProfileRequest = req.body
