@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { getUserProfile, BungieProfileResponse } from '../bungieApi'
+import { getUserProfile, BungieProfileResponse } from '../../modules/bungieApi'
 
 export interface ProfileRequest {
   accessToken: string

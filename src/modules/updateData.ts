@@ -1,8 +1,8 @@
 import { promises as fs } from 'fs'
 import fetch from 'node-fetch'
 
-import { components } from '../bungie'
-import { config } from './config'
+import { components } from './bungieTypes'
+import { config } from '../server/config'
 
 type Manifest = components['schemas']['Destiny.Config.DestinyManifest']
 

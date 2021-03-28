@@ -7,23 +7,26 @@ import { getAuth } from './controllers/getAuth'
 import { getRoot } from './controllers/getRoot'
 import { postProfile } from './controllers/postProfile'
 
-const app: Application = express()
 const port = 3000
 
-app.disable('x-powered-by')
-app.enable('trust proxy')
+export const createExpress = (): Application => {
+  const app: Application = express()
 
-app.use(compression({ level: 6 }))
-app.use(bodyParser.json())
-app.use(express.static('build/public'))
+  app.disable('x-powered-by')
+  app.enable('trust proxy')
 
-app.get('/', getRoot)
-app.get('/auth', getRoot)
+  app.use(compression({ level: 6 }))
+  app.use(bodyParser.json())
+  app.use(express.static('build/public'))
 
-app.get('/api/auth', getAuth)
-app.post('/api/profile', postProfile)
+  app.get('/', getRoot)
+  app.get('/auth', getRoot)
 
-export { app }
+  app.get('/api/auth', getAuth)
+  app.post('/api/profile', postProfile)
+
+  return app
+}
 
 export const startService = async (
   expressApp: Application
