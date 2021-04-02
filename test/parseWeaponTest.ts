@@ -7,7 +7,14 @@ describe('weapon stats and perks', () => {
   it('returns valid stats', () => {
     const hash = 1594120904
     const item = bungieInventoryItemDefinition.get(hash)
-    const stats = getStats(item)
+    const itemStats =
+      Object.values(item?.stats?.stats || {})
+        .filter((stat) => stat.statHash !== undefined && stat.value !== 0)
+        .map((stat) => ({
+          statHash: stat.statHash || 0,
+          value: stat.value || 0,
+        })) || []
+    const stats = getStats(itemStats)
 
     expect(stats).toEqual([
       { statHash: 4284893193, value: 340 },

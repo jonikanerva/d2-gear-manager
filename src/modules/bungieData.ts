@@ -62,11 +62,19 @@ export const parseProfileInventory = (
     .map((item) => {
       const itemHash = item.itemHash || 0
       const weapon = bungieInventoryItemDefinition.get(itemHash)
+      const itemStats = weapon?.stats?.stats || {}
+      const stats =
+        Object.values(itemStats)
+          ?.filter((stat) => stat.statHash !== undefined && stat.value !== 0)
+          .map((stat) => ({
+            statHash: stat.statHash || 0,
+            value: stat.value || 0,
+          })) || []
 
       return {
         itemHash,
         characterId: '',
-        stats: getStats(weapon),
+        stats: getStats(stats),
         perks: getSockets(weapon),
         // TODO masterwork: {},
         // TODO intrinsicTraits: {},
@@ -90,11 +98,19 @@ export const parseCharacterInventories = (
     .map((item) => {
       const itemHash = item?.itemHash || 0
       const weapon = bungieInventoryItemDefinition.get(itemHash)
+      const itemStats = weapon?.stats?.stats || {}
+      const stats =
+        Object.values(itemStats)
+          .filter((stat) => stat.statHash !== undefined && stat.value !== 0)
+          .map((stat) => ({
+            statHash: stat.statHash || 0,
+            value: stat.value || 0,
+          })) || []
 
       return {
         itemHash,
         characterId: item?.characterId || '',
-        stats: getStats(weapon),
+        stats: getStats(stats),
         perks: getSockets(weapon),
       }
     })
@@ -220,10 +236,12 @@ interface Stat {
   value: number
 }
 
-export const getStats = (item?: BungieInventoryItemDefinition): Stat[] => {
-  const itemStats = item?.stats?.stats || {}
-  const stats = Object.values(itemStats)
+interface DestinyStats {
+  statHash: number | undefined
+  value: number | undefined
+}
 
+export const getStats = (stats: DestinyStats[]): Stat[] => {
   return stats
     .filter((stat) => stat.value !== 0 && stat.statHash !== undefined)
     .map((stat) => {
@@ -253,25 +271,17 @@ export const getPerkInfo = (perks?: { plugItemHash?: number }[]): Perk[] => {
   return perks.map((perk) => {
     const hash = perk.plugItemHash || 0
     const item = bungieInventoryItemDefinition.get(hash)
-    const stats = item?.investmentStats || []
-    const investmentStats = stats
-      .filter((stat) => stat.value !== 0 && stat.statTypeHash !== undefined)
-      .map((stat) => {
-        const hash = stat.statTypeHash || 0
-        const definition = bungieStatDefinition.get(hash)
-
-        return {
-          statHash: definition?.hash || 0,
-          value: stat?.value || 0,
-          index: definition?.index || 100,
-        }
-      })
-      .sort((a, b) => a.index - b.index)
-      .map(({ statHash, value }) => ({ statHash, value }))
+    const stats =
+      item?.investmentStats
+        ?.filter((stat) => stat.statTypeHash !== undefined && stat.value !== 0)
+        .map((stat) => ({
+          statHash: stat.statTypeHash || 0,
+          value: stat.value || 0,
+        })) || []
 
     return {
       perkHash: hash,
-      stats: investmentStats,
+      stats: getStats(stats),
     }
   })
 }
