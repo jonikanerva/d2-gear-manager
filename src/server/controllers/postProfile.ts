@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { getUserProfile } from '../../modules/bungieApi'
-import { parseProfile } from '../../modules/bungieData'
+import { parseProfile, Profile } from '../../modules/bungieData'
 
 export interface ProfileRequest {
   accessToken: string
@@ -10,12 +10,7 @@ export interface ProfileRequest {
   primaryMembershipId: string
 }
 
-export interface ProfileResponse {
-  characters: any[]
-  vault: any[]
-  characterItems: any[]
-  characterEquipment: any[]
-}
+export type ProfileResponse = Profile
 
 const parseRequest = (req: Request): Promise<ProfileRequest> => {
   const body: ProfileRequest = req.body
