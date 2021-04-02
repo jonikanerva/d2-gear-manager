@@ -41,6 +41,9 @@ const readFile = (filename: string, store: Map<any, any>): Promise<void> => {
         store.set(value.hash || 0, value)
       })
     })
+    .then(() => {
+      store.delete(0)
+    })
 }
 
 export const loadDestinyInventoryItemDefinition = (): Promise<void> =>
