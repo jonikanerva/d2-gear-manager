@@ -41,7 +41,6 @@ const readFile = (filename: string, store: Map<any, any>): Promise<void> => {
         store.set(value.hash || 0, value)
       })
     })
-    .then(() => console.log('done.'))
 }
 
 export const loadDestinyInventoryItemDefinition = (): Promise<void> =>
@@ -69,4 +68,4 @@ export const loadDestinyData = (): Promise<unknown> =>
     loadDestinyStatDefinition(),
     loadDestinySocketTypeDefinition(),
     loadDestinySocketCategoryDefinition(),
-  ])
+  ]).then(() => console.log('All data read to memory.'))
