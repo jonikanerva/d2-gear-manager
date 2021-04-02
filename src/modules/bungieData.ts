@@ -1,5 +1,6 @@
 import {
   bungieInventoryItemDefinition,
+  BungieInventoryItemDefinition,
   bungiePlugSetDefinition,
   bungieStatDefinition,
 } from '../database'
@@ -41,6 +42,13 @@ export const parseCharacters = (
     emblem: `https://www.bungie.net${value.emblemBackgroundPath}`,
   }))
 
+interface CharacterInterface {
+  itemHash: number
+  characterId: string
+  stats: Stat[]
+  perks: Socket[]
+}
+
 export const parseProfileInventory = (
   profileInventory: BungieInventory
 ): CharacterInterface[] => {
@@ -51,11 +59,12 @@ export const parseProfileInventory = (
   return profileInventory.items
     .map(({ itemHash }) => ({ itemHash }))
     .filter(({ itemHash }) => isWeapon(itemHash))
-    .map((item: any) => {
-      const weapon = bungieInventoryItemDefinition.get(item.itemHash)
+    .map((item) => {
+      const itemHash = item.itemHash || 0
+      const weapon = bungieInventoryItemDefinition.get(itemHash)
 
       return {
-        itemHash: item.itemHash,
+        itemHash,
         characterId: '',
         stats: getStats(weapon),
         perks: getSockets(weapon),
@@ -64,13 +73,6 @@ export const parseProfileInventory = (
         // TODO mods: {},
       }
     })
-}
-
-interface CharacterInterface {
-  itemHash: number
-  characterId: string
-  stats: any
-  perks: any
 }
 
 export const parseCharacterInventories = (
@@ -85,12 +87,13 @@ export const parseCharacterInventories = (
     )
     .filter((item) => isWeapon(item?.itemHash))
     .filter((item) => item !== undefined)
-    .map((item: any) => {
-      const weapon = bungieInventoryItemDefinition.get(item.itemHash)
+    .map((item) => {
+      const itemHash = item?.itemHash || 0
+      const weapon = bungieInventoryItemDefinition.get(itemHash)
 
       return {
-        itemHash: item.itemHash,
-        characterId: item.characterId,
+        itemHash,
+        characterId: item?.characterId || '',
         stats: getStats(weapon),
         perks: getSockets(weapon),
       }
@@ -131,10 +134,10 @@ export const convertUser = (
 }
 
 export interface Profile {
-  characters: any
-  vault: any
-  characterItems: any
-  characterEquipment: any
+  characters: Character[]
+  vault: CharacterInterface[]
+  characterItems: CharacterInterface[]
+  characterEquipment: CharacterInterface[]
 }
 
 export const parseProfile = (profile: BungieProfileResponse): Profile => {
@@ -162,8 +165,20 @@ const isWeapon = (itemHash?: number): boolean => {
   return item?.itemType === 3
 }
 
-const getSockets = (item: any) => {
-  const itemEntries = item?.sockets?.socketEntries || {}
+interface Socket {
+  socketTypeHash: number
+  intrinsicPerks: Perk[]
+  randomPerks: Perk[]
+  curatedPerks: Perk[]
+}
+
+export const getSockets = (item?: BungieInventoryItemDefinition): Socket[] => {
+  const itemEntries = item?.sockets?.socketEntries
+
+  if (itemEntries === undefined) {
+    return []
+  }
+
   const entries = Object.values(itemEntries)
   // const masterworkHash = 2218962841
   // const trackerHash = 1282012138
@@ -173,24 +188,26 @@ const getSockets = (item: any) => {
 
   return entries
     .filter(
-      (entry: any) => entry?.socketTypeHash !== 0
+      (entry) =>
+        entry.socketTypeHash !== 0 && entry.socketTypeHash !== undefined
       //     entry?.socketTypeHash !== intrinsicHash &&
       //     entry?.socketTypeHash !== masterworkHash &&
       //     entry?.socketTypeHash !== shaderHash &&
       //     entry?.socketTypeHash !== trackerHash &&
       //     entry?.socketTypeHash !== weaponModHash
     )
-    .map((entry: any) => {
-      const reusablePlugSet: any = bungiePlugSetDefinition.get(
-        entry.reusablePlugSetHash
+    .map((entry) => {
+      const reusablePlugSetHash = entry.reusablePlugSetHash || 0
+      const randomizedPlugSetHash = entry.randomizedPlugSetHash || 0
+      const reusablePlugSet = bungiePlugSetDefinition.get(reusablePlugSetHash)
+        ?.reusablePlugItems
+      const randomizedPlugSet = bungiePlugSetDefinition.get(
+        randomizedPlugSetHash
       )?.reusablePlugItems
-      const randomizedPlugSet: any = bungiePlugSetDefinition.get(
-        entry.randomizedPlugSetHash
-      )?.reusablePlugItems
-      const reusablePlugItems: any = entry.reusablePlugItems
+      const reusablePlugItems = entry.reusablePlugItems
 
       return {
-        socketTypeHash: entry.socketTypeHash,
+        socketTypeHash: entry.socketTypeHash || 0,
         intrinsicPerks: getPerkInfo(reusablePlugSet),
         randomPerks: getPerkInfo(randomizedPlugSet),
         curatedPerks: getPerkInfo(reusablePlugItems),
@@ -198,47 +215,59 @@ const getSockets = (item: any) => {
     })
 }
 
-const getStats = (item: any) => {
+interface Stat {
+  statHash: number
+  value: number
+}
+
+export const getStats = (item?: BungieInventoryItemDefinition): Stat[] => {
   const itemStats = item?.stats?.stats || {}
   const stats = Object.values(itemStats)
 
   return stats
-    .filter((stat: any) => stat.value !== 0)
-    .map((stat: any) => {
-      const definition = bungieStatDefinition.get(stat.statHash)
+    .filter((stat) => stat.value !== 0 && stat.statHash !== undefined)
+    .map((stat) => {
+      const hash = stat.statHash || 0
+      const definition = bungieStatDefinition.get(hash)
 
       return {
-        statHash: definition?.hash,
-        value: stat?.value,
-        index: definition?.index,
+        statHash: definition?.hash || 0,
+        value: stat?.value || 0,
+        index: definition?.index || 100,
       }
     })
-    .sort((a: any, b: any) => a.index - b.index)
-    .map(({ statHash, value }: any) => ({ statHash, value }))
+    .sort((a, b) => a.index - b.index)
+    .map(({ statHash, value }) => ({ statHash, value }))
 }
 
-const getPerkInfo = (perks?: { plugItemHash: number }[]) => {
+interface Perk {
+  perkHash: number
+  stats: Stat[]
+}
+
+export const getPerkInfo = (perks?: { plugItemHash?: number }[]): Perk[] => {
   if (Array.isArray(perks) !== true || perks === undefined) {
     return []
   }
 
   return perks.map((perk) => {
-    const hash = perk.plugItemHash
+    const hash = perk.plugItemHash || 0
     const item = bungieInventoryItemDefinition.get(hash)
     const stats = item?.investmentStats || []
     const investmentStats = stats
-      .filter((stat: any) => stat.value !== 0)
-      .map((stat: any) => {
-        const definition = bungieStatDefinition.get(stat.statTypeHash)
+      .filter((stat) => stat.value !== 0 && stat.statTypeHash !== undefined)
+      .map((stat) => {
+        const hash = stat.statTypeHash || 0
+        const definition = bungieStatDefinition.get(hash)
 
         return {
-          statHash: definition?.hash,
-          value: stat?.value,
-          index: definition?.index,
+          statHash: definition?.hash || 0,
+          value: stat?.value || 0,
+          index: definition?.index || 100,
         }
       })
-      .sort((a: any, b: any) => a.index - b.index)
-      .map(({ statHash, value }: any) => ({ statHash, value }))
+      .sort((a, b) => a.index - b.index)
+      .map(({ statHash, value }) => ({ statHash, value }))
 
     return {
       perkHash: hash,
