@@ -44,7 +44,7 @@ export const parseCharacters = (
     emblem: `https://www.bungie.net${value.emblemBackgroundPath}`,
   }))
 
-interface CharacterInterface {
+export interface CharacterInterface {
   itemHash: number
   name: string
   characterId: string
