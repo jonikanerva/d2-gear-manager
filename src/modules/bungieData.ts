@@ -2,6 +2,8 @@ import {
   bungieInventoryItemDefinition,
   BungieInventoryItemDefinition,
   bungiePlugSetDefinition,
+  bungieSocketCategoryDefinition,
+  bungieSocketTypeDefinition,
   bungieStatDefinition,
 } from '../database'
 import { AuthResponse } from '../server/controllers/getAuth'
@@ -44,6 +46,7 @@ export const parseCharacters = (
 
 interface CharacterInterface {
   itemHash: number
+  name: string
   characterId: string
   stats: Stat[]
   perks: Socket[]
@@ -73,6 +76,7 @@ export const parseProfileInventory = (
 
       return {
         itemHash,
+        name: weapon?.displayProperties?.name || '',
         characterId: '',
         stats: getStats(stats),
         perks: getSockets(weapon),
@@ -109,6 +113,7 @@ export const parseCharacterInventories = (
 
       return {
         itemHash,
+        name: weapon?.displayProperties?.name || '',
         characterId: item?.characterId || '',
         stats: getStats(stats),
         perks: getSockets(weapon),
@@ -183,6 +188,7 @@ const isWeapon = (itemHash?: number): boolean => {
 
 interface Socket {
   socketTypeHash: number
+  name: string
   intrinsicPerks: Perk[]
   randomPerks: Perk[]
   curatedPerks: Perk[]
@@ -215,6 +221,12 @@ export const getSockets = (item?: BungieInventoryItemDefinition): Socket[] => {
     .map((entry) => {
       const reusablePlugSetHash = entry.reusablePlugSetHash || 0
       const randomizedPlugSetHash = entry.randomizedPlugSetHash || 0
+      const socketTypeHash = entry.socketTypeHash || 0
+      const socketType = bungieSocketTypeDefinition.get(socketTypeHash)
+      const socketCategoryHash = socketType?.socketCategoryHash || 0
+      const socketCategory = bungieSocketCategoryDefinition.get(
+        socketCategoryHash
+      )
       const reusablePlugSet = bungiePlugSetDefinition.get(reusablePlugSetHash)
         ?.reusablePlugItems
       const randomizedPlugSet = bungiePlugSetDefinition.get(
@@ -223,7 +235,8 @@ export const getSockets = (item?: BungieInventoryItemDefinition): Socket[] => {
       const reusablePlugItems = entry.reusablePlugItems
 
       return {
-        socketTypeHash: entry.socketTypeHash || 0,
+        socketTypeHash,
+        name: socketCategory?.displayProperties?.name || '',
         intrinsicPerks: getPerkInfo(reusablePlugSet),
         randomPerks: getPerkInfo(randomizedPlugSet),
         curatedPerks: getPerkInfo(reusablePlugItems),
@@ -234,6 +247,7 @@ export const getSockets = (item?: BungieInventoryItemDefinition): Socket[] => {
 interface Stat {
   statHash: number
   value: number
+  name: string
 }
 
 interface DestinyStats {
@@ -250,16 +264,22 @@ export const getStats = (stats: DestinyStats[]): Stat[] => {
 
       return {
         statHash: definition?.hash || 0,
+        name: definition?.displayProperties?.name || '',
         value: stat?.value || 0,
         index: definition?.index || 100,
       }
     })
     .sort((a, b) => a.index - b.index)
-    .map(({ statHash, value }) => ({ statHash, value }))
+    .map(({ statHash, value, name }) => ({
+      statHash,
+      value,
+      name,
+    }))
 }
 
 interface Perk {
   perkHash: number
+  name: string
   stats: Stat[]
 }
 
@@ -281,6 +301,7 @@ export const getPerkInfo = (perks?: { plugItemHash?: number }[]): Perk[] => {
 
     return {
       perkHash: hash,
+      name: item?.displayProperties?.name || '',
       stats: getStats(stats),
     }
   })
