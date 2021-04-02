@@ -15,7 +15,7 @@ export const createExpress = (): Application => {
   app.disable('x-powered-by')
   app.enable('trust proxy')
 
-  app.use(compression({ level: 6 }))
+  app.use(compression({ level: 9 }))
   app.use(bodyParser.json())
   app.use(express.static('build/public'))
 
