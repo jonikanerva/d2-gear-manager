@@ -62,13 +62,17 @@ export const getUserProfile = ({
   const characters = 200 // summary info about each of the characters in the profile
   const characterInventories = 201 // non-equipped items on the character(s)
   const characterEquipment = 205 // equipped items on the character(s)
+  const itemComponents = 300 //  basic info about instanced items
   const itemSockets = 305 // all info relevant to the sockets on items that have them
+  const itemReusablePlugs = 310 // what plugs *could* be inserted into a socket
   const components = [
-    profileInventories,
-    characters,
-    characterInventories,
     characterEquipment,
+    characterInventories,
+    characters,
+    itemComponents,
+    itemReusablePlugs,
     itemSockets,
+    profileInventories,
   ].join(',')
   const url = `https://www.bungie.net/Platform/Destiny2/${memberShipType}/Profile/${primaryMembershipId}?components=${components}`
 
