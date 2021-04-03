@@ -73,18 +73,20 @@ const parseItems = (profile: BungieProfileResponse): ItemHash[] => {
 
 export interface Item {
   itemHash: number
-  itemInstanceId: number
+  name: string
+  icon: string
+  type: number
+  typeName: string
+  tierType: number
+  tierTypeName: string
   storedAt: string
   equipped?: boolean
-  name: string
+  index: number
   damageType: number
   powerLevel: number
-  stats: {
-    statHash: number
-    value: number
-  }[]
-  equippedPerks: number[]
-  availablePerks: number[]
+  stats: Stat[]
+  equippedPerks: Perk[]
+  availablePerks: Perk[]
 }
 
 const isWeapon = (itemHash: number): boolean => {
@@ -108,7 +110,7 @@ const prepareItems = (
     .map((weapon) => {
       const itemInstanceId = weapon.itemInstanceId
       const itemHash = weapon.itemHash
-      const weaponInfo = bungieInventoryItemDefinition.get(itemHash)
+      const weaponInfo = getWeapon(itemHash)
 
       // basic info for current random weapon
       const itemInfo =
@@ -117,15 +119,21 @@ const prepareItems = (
       // calculated stats for the current random weapon (including perks)
       const itemStats = Object.values(
         itemComponents?.stats?.data?.[`${itemInstanceId}`]?.stats || {}
-      ).map((item) => ({
-        statHash: item.statHash || 0,
-        value: item.value || 0,
-      }))
+      ).map(
+        (item): Stat => ({
+          ...getStat(item.statHash || 0),
+          value: item.value || 0,
+        })
+      )
 
       // all available perks for current random weapon
       const reusablePlugs = Object.values(
         itemComponents.reusablePlugs?.data?.[`${itemInstanceId}`]?.plugs || {}
-      ).flatMap((value) => value.map(({ plugItemHash }) => plugItemHash || 0))
+      ).flatMap((value) =>
+        value.map(
+          ({ plugItemHash }): Perk => ({ ...getPerk(plugItemHash || 0) })
+        )
+      )
 
       // equipped perks for current random weapon
       const itemSockets =
@@ -134,11 +142,19 @@ const prepareItems = (
             (socket) =>
               socket.isVisible === true && socket.plugHash !== undefined
           )
-          .map((item) => item.plugHash || 0) || []
+          .map(({ plugHash }): Perk => ({ ...getPerk(plugHash || 0) })) || []
 
       return {
-        ...weapon,
-        name: weaponInfo?.displayProperties?.name || '',
+        itemHash: weapon.itemHash,
+        name: weaponInfo.name,
+        icon: weaponInfo.icon,
+        type: weaponInfo.type,
+        typeName: weaponInfo.typeName,
+        tierType: weaponInfo.tierType,
+        tierTypeName: weaponInfo.tierTypeName,
+        storedAt: weapon.storedAt,
+        equipped: weapon.equipped,
+        index: weaponInfo.index,
         damageType: itemInfo.damageType || 0,
         powerLevel: itemInfo.primaryStat?.value || 0,
         stats: itemStats,
@@ -199,6 +215,7 @@ export interface Stat {
   description: string
   category: number
   index: number
+  value: number
 }
 
 const getStat = (hash: number): Stat => {
@@ -210,39 +227,22 @@ const getStat = (hash: number): Stat => {
     description: stat?.displayProperties?.description || '',
     category: stat?.statCategory || 0,
     index: stat?.index || 0,
+    value: 0,
   }
 }
 
 export interface Profile {
   characters: Character[]
   items: Item[]
-  weapons: Weapon[]
-  stats: Stat[]
-  perks: Perk[]
 }
 
 export const parseProfile = (profile: BungieProfileResponse): Profile => {
-  const weapons = new Set<number>()
-  const perks = new Set<number>()
-  const stats = new Set<number>()
   const characters = profile?.Response?.characters?.data || {}
   const itemComponents = profile?.Response?.itemComponents || {}
   const allItems = parseItems(profile)
-  const items = prepareItems(allItems, itemComponents)
-
-  // create set of unique hashes for this user
-  items.forEach((item) => {
-    weapons.add(item.itemHash)
-    item.equippedPerks.forEach((perk) => perks.add(perk))
-    item.availablePerks.forEach((perk) => perks.add(perk))
-    item.stats.forEach((stat) => stats.add(stat.statHash))
-  })
 
   return {
     characters: parseCharacters(characters),
-    items,
-    weapons: [...weapons].map((hash) => getWeapon(hash)),
-    perks: [...perks].map((hash) => getPerk(hash)),
-    stats: [...stats].map((hash) => getStat(hash)),
+    items: prepareItems(allItems, itemComponents),
   }
 }
