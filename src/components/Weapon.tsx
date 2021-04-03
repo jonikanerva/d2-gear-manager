@@ -1,20 +1,28 @@
 import React from 'react'
 
-import { CharacterInterface } from '../modules/bungieData'
+import { ItemInfo } from '../modules/bungieItems'
 
 interface WeaponProps {
-  weapon: CharacterInterface
+  weapon: ItemInfo
 }
 
 const Weapon: React.FC<WeaponProps> = ({ weapon }: WeaponProps) => {
   return (
     <div>
-      {weapon.name}
+      {weapon.itemHash} ({weapon.storedAt})
       {weapon.stats.map((stat, key) => {
         return (
           <li key={key}>
-            {stat.name}: {stat.value}
+            {stat.statHash}: {stat.value}
           </li>
+        )
+      })}
+      <br />
+      {weapon.equippedPerks.map((perk, key) => {
+        return (
+          <div key={key}>
+            <li>{perk.perkHash}</li>
+          </div>
         )
       })}
       <br />

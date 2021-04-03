@@ -74,37 +74,43 @@ export const parseProfileInventory = (
       const itemHash = item.itemHash || 0
       const itemInstanceId = item.itemInstanceId || undefined
       const weapon = bungieInventoryItemDefinition.get(itemHash)
-      const itemStats = weapon?.stats?.stats || {}
-      const stats =
-        Object.values(itemStats)
-          ?.filter((stat) => stat.statHash !== undefined && stat.value !== 0)
-          .map((stat) => ({
-            statHash: stat.statHash || 0,
-            value: stat.value || 0,
-          })) || []
-      const reusablePlugs =
-        itemComponents.reusablePlugs?.data?.[`${itemInstanceId}`]?.plugs || {}
+
+      // basic info for current random weapon
       const itemInfo =
         itemComponents?.instances?.data?.[`${itemInstanceId}`] || {}
+
+      // calculated stats for the current random weapon (including perks)
+      const itemStats =
+        itemComponents?.stats?.data?.[`${itemInstanceId}`]?.stats || {}
+      const stats = Object.values(itemStats) as DestinyStats[]
+
+      // all available perks for current random weapon
+      const reusablePlugs =
+        itemComponents.reusablePlugs?.data?.[`${itemInstanceId}`]?.plugs || {}
+
+      // equipped perks for current random weapon
       const itemSockets = itemComponents?.sockets?.data?.[
         `${itemInstanceId}`
-      ]?.sockets?.map((perk) => {
-        const perkstats = getPerk(perk.plugHash || 0)
-
-        return {
-          ...perk,
-          perkstats,
-        }
-      })
+      ]?.sockets
+        ?.filter((socket) => socket.isVisible === true)
+        .map((perk) => {
+          const perkstats = getPerk(perk.plugHash || 0)
+          return {
+            ...perkstats,
+          }
+        })
 
       return {
         itemHash,
         itemInstanceId,
-        itemInfo,
+        itemInfo: {
+          damageTypeHash: itemInfo.damageTypeHash,
+          primaryStat: itemInfo.primaryStat,
+        },
         itemSockets,
         reusablePlugs,
         name: weapon?.displayProperties?.name || '',
-        characterId: '',
+        characterId: '0',
         stats: getStats(stats),
         perks: getSockets(weapon),
         // TODO masterwork: {},

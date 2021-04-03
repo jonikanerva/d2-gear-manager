@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { getUserProfile } from '../../modules/bungieApi'
-import { parseProfile, Profile } from '../../modules/bungieData'
+import { parseProfile, Profile } from '../../modules/bungieItems'
 
 export interface ProfileRequest {
   accessToken: string

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+
 import { ProfileResponse } from '../server/controllers/postProfile'
 import Weapon from './Weapon'
 
@@ -67,16 +68,10 @@ const Profile: React.FC<ProfileProps> = ({
           </div>
         )
       })}
-      <h2>Equipped</h2>
-      {profile.characterEquipment.map((weapon, key) => (
+      <h2>Weapons</h2>
+      {profile.items.map((weapon, key) => (
         <Weapon key={key} weapon={weapon} />
       ))}
-      <h2>Inventory</h2>
-      {profile.characterItems.map((weapon, key) => (
-        <Weapon key={key} weapon={weapon} />
-      ))}
-      <h2>Vault</h2>
-      {profile.vault.length} weapons
     </div>
   )
 }

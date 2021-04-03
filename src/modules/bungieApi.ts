@@ -74,9 +74,9 @@ export const getUserProfile = ({
     itemSockets,
     profileInventories,
   ].join(',')
-  const url = `https://www.bungie.net/Platform/Destiny2/${memberShipType}/Profile/${primaryMembershipId}?components=${components}`
+  const url = `https://www.bungie.net/Platform/Destiny2/${memberShipType}/Profile/${primaryMembershipId}?components=102,200,201,205,300,302,304,305,301,306,307,308,309,310`
 
-  console.log('Fetching ', url)
+  console.log('Fetching ', url, components)
 
   return fetch(url, {
     headers: {
