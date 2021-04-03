@@ -80,9 +80,8 @@ export interface ItemInfo {
   storedAt: string
   equipped?: boolean
   name: string
-  damageTypeHash: number
-  primaryStatHash: number
-  primaryStatValue: number
+  damageType: number
+  powerLevel: number
   stats: {
     statHash: number
     value: number
@@ -137,9 +136,8 @@ const prepareItems = (
       return {
         ...weapon,
         name: weaponInfo?.displayProperties?.name || '',
-        damageTypeHash: itemInfo.damageTypeHash || 0,
-        primaryStatHash: itemInfo.primaryStat?.statHash || 0,
-        primaryStatValue: itemInfo.primaryStat?.value || 0,
+        damageType: itemInfo.damageType || 0,
+        powerLevel: itemInfo.primaryStat?.value || 0,
         stats: itemStats,
         equippedPerks: itemSockets,
         availablePerks: reusablePlugs,
