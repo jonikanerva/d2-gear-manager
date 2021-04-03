@@ -8,12 +8,6 @@ import { components } from './bungieTypes'
 type BungieItemComponents = components['schemas']['DestinyItemComponentSetOfint64']
 type BungieCharacter = components['schemas']['Destiny.Entities.Characters.DestinyCharacterComponent']
 
-const isWeapon = (itemHash: number): boolean => {
-  const item = bungieInventoryItemDefinition.get(itemHash)
-
-  return item?.itemType === 3
-}
-
 interface Character {
   characterId: number
   race: number
@@ -93,6 +87,12 @@ export interface Item {
   availablePerks: number[]
 }
 
+const isWeapon = (itemHash: number): boolean => {
+  const item = bungieInventoryItemDefinition.get(itemHash)
+
+  return item?.itemType === 3
+}
+
 const prepareItems = (
   items: ItemHash[],
   itemComponents: BungieItemComponents
@@ -146,14 +146,6 @@ const prepareItems = (
         availablePerks: reusablePlugs,
       }
     })
-
-export interface Profile {
-  characters: Character[]
-  items: Item[]
-  weapons: Weapon[]
-  stats: Stat[]
-  perks: Perk[]
-}
 
 export interface Weapon {
   itemHash: number
@@ -219,6 +211,14 @@ const getStat = (hash: number): Stat => {
     category: stat?.statCategory || 0,
     index: stat?.index || 0,
   }
+}
+
+export interface Profile {
+  characters: Character[]
+  items: Item[]
+  weapons: Weapon[]
+  stats: Stat[]
+  perks: Perk[]
 }
 
 export const parseProfile = (profile: BungieProfileResponse): Profile => {
