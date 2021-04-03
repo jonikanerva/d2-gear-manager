@@ -1,7 +1,7 @@
 .weaponName {
   color: white;
   font-size: 20px;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 /* top | right | bottom | left */
@@ -18,21 +18,13 @@
   border-radius: 4px;
 }
 
-.image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  overflow: hidden;
-  border-radius: 2px;
-}
-
 .stats {
   color: white;
   font-size: 12px;
 }
 
 .perks {
-  padding-top: 10px;
+  padding-top: 8px;
   color: white;
   font-size: 10px;
 }
