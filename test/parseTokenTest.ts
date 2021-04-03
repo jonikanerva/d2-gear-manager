@@ -1,4 +1,4 @@
-import { parseToken } from '../src/modules/bungieData'
+import { parseToken } from '../src/modules/bungieAuth'
 import tokenResponseJson from './fixtures/tokenResponse.json'
 
 const tokenResponse = tokenResponseJson as any

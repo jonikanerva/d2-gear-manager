@@ -1,4 +1,4 @@
-import { convertUser } from '../src/modules/bungieData'
+import { convertUser } from '../src/modules/bungieAuth'
 import tokenResponseJson from './fixtures/tokenResponse.json'
 import bobmursuJson from './fixtures/userInfoBobmursu.json'
 import calmdonutJson from './fixtures/userInfoCalmdonut.json'
