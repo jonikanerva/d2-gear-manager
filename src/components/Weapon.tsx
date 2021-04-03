@@ -9,32 +9,7 @@ interface WeaponProps {
 const Weapon: React.FC<WeaponProps> = ({ item }: WeaponProps) => {
   return (
     <div>
-      stats
-      {item.stats.map((stat, key) => {
-        return (
-          <li key={key}>
-            {stat.statHash}: {stat.value}
-          </li>
-        )
-      })}
-      <br />
-      equipped perks
-      {item.equippedPerks.map((perk, key) => {
-        return (
-          <div key={key}>
-            <li>{perk}</li>
-          </div>
-        )
-      })}
-      <br />
-      available perks
-      {item.availablePerks.map((perk, key) => {
-        return (
-          <div key={key}>
-            <li>{perk}</li>
-          </div>
-        )
-      })}
+      <img src={`https://www.bungie.net${item.icon}`} />
     </div>
   )
 }
