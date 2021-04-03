@@ -21,7 +21,7 @@ const Weapon: React.FC<WeaponProps> = ({ weapon }: WeaponProps) => {
       {weapon.equippedPerks.map((perk, key) => {
         return (
           <div key={key}>
-            <li>{perk.perkHash}</li>
+            <li>{perk}</li>
           </div>
         )
       })}

@@ -50,34 +50,26 @@ const parseItems = (profile: BungieProfileResponse): Item[] => {
 
   const equippedItems = Object.entries(equippedItemsData).flatMap(
     ([key, value]) =>
-      value?.items
-        ?.map(
-          (item): Item => ({
-            itemHash: item.itemHash || 0,
-            itemInstanceId: item.itemInstanceId || 0,
-            storedAt: key,
-            equipped: true,
-          })
-        )
-        .filter((item) => item === undefined) || []
+      value?.items?.map(
+        (item): Item => ({
+          itemHash: item.itemHash || 0,
+          itemInstanceId: item.itemInstanceId || 0,
+          storedAt: key,
+          equipped: true,
+        })
+      ) || []
   )
 
   const inventoryItems = Object.entries(inventoryItemsData).flatMap(
     ([key, value]) =>
-      value?.items
-        ?.map(
-          (item): Item => ({
-            itemHash: item.itemHash || 0,
-            itemInstanceId: item.itemInstanceId || 0,
-            storedAt: key,
-          })
-        )
-        .filter((item) => item === undefined) || []
+      value?.items?.map(
+        (item): Item => ({
+          itemHash: item.itemHash || 0,
+          itemInstanceId: item.itemInstanceId || 0,
+          storedAt: key,
+        })
+      ) || []
   )
-
-  console.log('vault', vaultItemsData)
-  console.log('equipped', equippedItemsData)
-  console.log('inventory', inventoryItemsData)
 
   return [...vaultItems, ...equippedItems, ...inventoryItems]
 }
@@ -87,6 +79,7 @@ export interface ItemInfo {
   itemInstanceId: number
   storedAt: string
   equipped?: boolean
+  name: string
   damageTypeHash: number
   primaryStatHash: number
   primaryStatValue: number
@@ -94,12 +87,8 @@ export interface ItemInfo {
     statHash: number
     value: number
   }[]
-  equippedPerks: {
-    perkHash: number
-  }[]
-  availablePerks: {
-    perkHash: number
-  }[]
+  equippedPerks: number[]
+  availablePerks: number[]
 }
 
 const prepareItems = (
@@ -107,9 +96,17 @@ const prepareItems = (
   itemComponents: BungieItemComponents
 ): ItemInfo[] =>
   items
-    .filter((item) => isWeapon(item?.itemHash || 0))
+    .filter(
+      (item) =>
+        item !== undefined &&
+        item.itemHash !== 0 &&
+        item.itemInstanceId !== 0 &&
+        isWeapon(item.itemHash)
+    )
     .map((weapon) => {
       const itemInstanceId = weapon.itemInstanceId
+      const itemHash = weapon.itemHash
+      const weaponInfo = bungieInventoryItemDefinition.get(itemHash)
 
       // basic info for current random weapon
       const itemInfo =
@@ -126,20 +123,20 @@ const prepareItems = (
       // all available perks for current random weapon
       const reusablePlugs = Object.values(
         itemComponents.reusablePlugs?.data?.[`${itemInstanceId}`]?.plugs || {}
-      ).flatMap((value) =>
-        value.map(({ plugItemHash }) => ({
-          perkHash: plugItemHash || 0,
-        }))
-      )
+      ).flatMap((value) => value.map(({ plugItemHash }) => plugItemHash || 0))
 
       // equipped perks for current random weapon
       const itemSockets =
         itemComponents?.sockets?.data?.[`${itemInstanceId}`]?.sockets
-          ?.filter((socket) => socket.isVisible === true)
-          .map((item) => ({ perkHash: item.plugHash || 0 })) || []
+          ?.filter(
+            (socket) =>
+              socket.isVisible === true && socket.plugHash !== undefined
+          )
+          .map((item) => item.plugHash || 0) || []
 
       return {
         ...weapon,
+        name: weaponInfo?.displayProperties?.name || '',
         damageTypeHash: itemInfo.damageTypeHash || 0,
         primaryStatHash: itemInfo.primaryStat?.statHash || 0,
         primaryStatValue: itemInfo.primaryStat?.value || 0,
@@ -158,10 +155,9 @@ export const parseProfile = (profile: BungieProfileResponse): Profile => {
   const characters = profile?.Response?.characters?.data || {}
   const itemComponents = profile?.Response?.itemComponents || {}
   const items = parseItems(profile)
-  const itemInfos = prepareItems(items, itemComponents)
 
   return {
     characters: parseCharacters(characters),
-    items: itemInfos,
+    items: prepareItems(items, itemComponents),
   }
 }
