@@ -59,15 +59,6 @@ const Profile: React.FC<ProfileProps> = ({
 
   return (
     <div>
-      <h1>Your profile</h1>
-      <h2>Characters</h2>
-      {profile.characters.map((character, key) => {
-        return (
-          <div key={key}>
-            <img src={character.emblem} />
-          </div>
-        )
-      })}
       <Weapons profile={profile} />
     </div>
   )

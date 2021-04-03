@@ -1,0 +1,6 @@
+.weapons {
+  padding-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
