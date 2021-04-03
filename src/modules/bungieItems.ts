@@ -8,13 +8,6 @@ import { components } from './bungieTypes'
 type BungieItemComponents = components['schemas']['DestinyItemComponentSetOfint64']
 type BungieCharacter = components['schemas']['Destiny.Entities.Characters.DestinyCharacterComponent']
 
-export interface Item {
-  itemHash: number
-  itemInstanceId: number
-  storedAt: string
-  equipped?: boolean
-}
-
 const isWeapon = (itemHash: number): boolean => {
   const item = bungieInventoryItemDefinition.get(itemHash)
 
@@ -38,13 +31,20 @@ const parseCharacters = (
     emblem: `https://www.bungie.net${value.emblemBackgroundPath}`,
   }))
 
-const parseItems = (profile: BungieProfileResponse): Item[] => {
+export interface ItemHash {
+  itemHash: number
+  itemInstanceId: number
+  storedAt: string
+  equipped?: boolean
+}
+
+const parseItems = (profile: BungieProfileResponse): ItemHash[] => {
   const vaultItemsData = profile?.Response?.profileInventory?.data?.items || []
   const equippedItemsData = profile?.Response?.characterInventories?.data || {}
   const inventoryItemsData = profile?.Response?.characterEquipment?.data || {}
 
   const vaultItems = vaultItemsData.map(
-    (item): Item => ({
+    (item): ItemHash => ({
       itemHash: item.itemHash || 0,
       itemInstanceId: item.itemInstanceId || 0,
       storedAt: '0',
@@ -54,7 +54,7 @@ const parseItems = (profile: BungieProfileResponse): Item[] => {
   const equippedItems = Object.entries(equippedItemsData).flatMap(
     ([key, value]) =>
       value?.items?.map(
-        (item): Item => ({
+        (item): ItemHash => ({
           itemHash: item.itemHash || 0,
           itemInstanceId: item.itemInstanceId || 0,
           storedAt: key,
@@ -66,7 +66,7 @@ const parseItems = (profile: BungieProfileResponse): Item[] => {
   const inventoryItems = Object.entries(inventoryItemsData).flatMap(
     ([key, value]) =>
       value?.items?.map(
-        (item): Item => ({
+        (item): ItemHash => ({
           itemHash: item.itemHash || 0,
           itemInstanceId: item.itemInstanceId || 0,
           storedAt: key,
@@ -77,7 +77,7 @@ const parseItems = (profile: BungieProfileResponse): Item[] => {
   return [...vaultItems, ...equippedItems, ...inventoryItems]
 }
 
-export interface ItemInfo {
+export interface Item {
   itemHash: number
   itemInstanceId: number
   storedAt: string
@@ -94,9 +94,9 @@ export interface ItemInfo {
 }
 
 const prepareItems = (
-  items: Item[],
+  items: ItemHash[],
   itemComponents: BungieItemComponents
-): ItemInfo[] =>
+): Item[] =>
   items
     .filter(
       (item) =>
@@ -149,33 +149,75 @@ const prepareItems = (
 
 export interface Profile {
   characters: Character[]
-  items: ItemInfo[]
-  weapons: any[]
-  stats: any[]
-  perks: any[]
+  items: Item[]
+  weapons: Weapon[]
+  stats: Stat[]
+  perks: Perk[]
 }
 
-const getWeapon = (hash: number) => {
+export interface Weapon {
+  itemHash: number
+  name: string
+  icon: string
+  type: number
+  typeName: string
+  tierType: number
+  tierTypeName: string
+  index: number
+}
+
+const getWeapon = (hash: number): Weapon => {
   const weapon = bungieInventoryItemDefinition.get(hash)
 
   return {
-    ...weapon,
+    itemHash: hash,
+    name: weapon?.displayProperties?.name || '',
+    icon: weapon?.displayProperties?.icon || '',
+    type: weapon?.itemType || 0,
+    typeName: weapon?.itemTypeDisplayName || '',
+    tierType: weapon?.inventory?.tierType || 0,
+    tierTypeName: weapon?.inventory?.tierTypeName || '',
+    index: weapon?.index || 0,
   }
 }
 
-const getPerk = (hash: number) => {
+export interface Perk {
+  perkHash: number
+  name: string
+  icon: string
+  type: string
+  index: number
+}
+
+const getPerk = (hash: number): Perk => {
   const perk = bungieInventoryItemDefinition.get(hash)
 
   return {
-    ...perk,
+    perkHash: hash,
+    name: perk?.displayProperties?.name || '',
+    icon: perk?.displayProperties?.icon || '',
+    type: perk?.itemTypeDisplayName || '',
+    index: perk?.index || 0,
   }
 }
 
-const getStat = (hash: number) => {
+export interface Stat {
+  statHash: number
+  name: string
+  description: string
+  category: number
+  index: number
+}
+
+const getStat = (hash: number): Stat => {
   const stat = bungieStatDefinition.get(hash)
 
   return {
-    ...stat,
+    statHash: hash,
+    name: stat?.displayProperties?.name || '',
+    description: stat?.displayProperties?.description || '',
+    category: stat?.statCategory || 0,
+    index: stat?.index || 0,
   }
 }
 

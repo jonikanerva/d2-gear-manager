@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { ItemInfo } from '../modules/bungieItems'
+import { Item } from '../modules/bungieItems'
 
 interface WeaponProps {
-  weapon: ItemInfo
+  weapon: Item
 }
 
 const Weapon: React.FC<WeaponProps> = ({ weapon }: WeaponProps) => {
