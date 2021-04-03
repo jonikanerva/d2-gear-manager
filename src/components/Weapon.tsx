@@ -1,16 +1,19 @@
 import React from 'react'
 
-import { Item } from '../modules/bungieItems'
+import { Item, Weapon } from '../modules/bungieItems'
 
 interface WeaponProps {
-  weapon: Item
+  item: Item
+  weapon: Weapon
 }
 
-const Weapon: React.FC<WeaponProps> = ({ weapon }: WeaponProps) => {
+const Weapon: React.FC<WeaponProps> = ({ item, weapon }: WeaponProps) => {
   return (
     <div>
-      {weapon.itemHash} ({weapon.storedAt})
-      {weapon.stats.map((stat, key) => {
+      {weapon.name}
+      <img src={`https://www.bungie.net${weapon.icon}`} />
+      stats
+      {item.stats.map((stat, key) => {
         return (
           <li key={key}>
             {stat.statHash}: {stat.value}
@@ -18,7 +21,8 @@ const Weapon: React.FC<WeaponProps> = ({ weapon }: WeaponProps) => {
         )
       })}
       <br />
-      {weapon.equippedPerks.map((perk, key) => {
+      equipped perks
+      {item.equippedPerks.map((perk, key) => {
         return (
           <div key={key}>
             <li>{perk}</li>
@@ -26,6 +30,14 @@ const Weapon: React.FC<WeaponProps> = ({ weapon }: WeaponProps) => {
         )
       })}
       <br />
+      available perks
+      {item.availablePerks.map((perk, key) => {
+        return (
+          <div key={key}>
+            <li>{perk}</li>
+          </div>
+        )
+      })}
     </div>
   )
 }

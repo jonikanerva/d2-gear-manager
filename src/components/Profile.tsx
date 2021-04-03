@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { ProfileResponse } from '../server/controllers/postProfile'
-import Weapon from './Weapon'
+import Weapons from './Weapons'
 
 interface ProfileProps {
   accessToken: string
@@ -68,10 +68,7 @@ const Profile: React.FC<ProfileProps> = ({
           </div>
         )
       })}
-      <h2>Weapons</h2>
-      {profile.items.map((weapon, key) => (
-        <Weapon key={key} weapon={weapon} />
-      ))}
+      <Weapons profile={profile} />
     </div>
   )
 }
