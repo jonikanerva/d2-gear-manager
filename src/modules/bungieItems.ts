@@ -1,4 +1,7 @@
-import { bungieInventoryItemDefinition } from '../database'
+import {
+  bungieInventoryItemDefinition,
+  bungieStatDefinition,
+} from '../database'
 import { BungieProfileResponse } from './bungieApi'
 import { components } from './bungieTypes'
 
@@ -147,15 +150,57 @@ const prepareItems = (
 export interface Profile {
   characters: Character[]
   items: ItemInfo[]
+  weapons: any[]
+  stats: any[]
+  perks: any[]
+}
+
+const getWeapon = (hash: number) => {
+  const weapon = bungieInventoryItemDefinition.get(hash)
+
+  return {
+    ...weapon,
+  }
+}
+
+const getPerk = (hash: number) => {
+  const perk = bungieInventoryItemDefinition.get(hash)
+
+  return {
+    ...perk,
+  }
+}
+
+const getStat = (hash: number) => {
+  const stat = bungieStatDefinition.get(hash)
+
+  return {
+    ...stat,
+  }
 }
 
 export const parseProfile = (profile: BungieProfileResponse): Profile => {
+  const weapons = new Set<number>()
+  const perks = new Set<number>()
+  const stats = new Set<number>()
   const characters = profile?.Response?.characters?.data || {}
   const itemComponents = profile?.Response?.itemComponents || {}
-  const items = parseItems(profile)
+  const allItems = parseItems(profile)
+  const items = prepareItems(allItems, itemComponents)
+
+  // create set of unique hashes for this user
+  items.forEach((item) => {
+    weapons.add(item.itemHash)
+    item.equippedPerks.forEach((perk) => perks.add(perk))
+    item.availablePerks.forEach((perk) => perks.add(perk))
+    item.stats.forEach((stat) => stats.add(stat.statHash))
+  })
 
   return {
     characters: parseCharacters(characters),
-    items: prepareItems(items, itemComponents),
+    items,
+    weapons: [...weapons].map((hash) => getWeapon(hash)),
+    perks: [...perks].map((hash) => getPerk(hash)),
+    stats: [...stats].map((hash) => getStat(hash)),
   }
 }
