@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { getToken, getUserInfo } from '../../modules/bungieApi'
-import { convertUser, parseToken } from '../../modules/bungieData'
+import { convertUser, parseToken } from '../../modules/bungieAuth'
 
 export interface AuthResponse {
   accessToken: string
