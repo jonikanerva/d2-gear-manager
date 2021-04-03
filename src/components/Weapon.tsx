@@ -1,17 +1,14 @@
 import React from 'react'
 
-import { Item, Weapon } from '../modules/bungieItems'
+import { Item } from '../modules/bungieItems'
 
 interface WeaponProps {
   item: Item
-  weapon: Weapon
 }
 
-const Weapon: React.FC<WeaponProps> = ({ item, weapon }: WeaponProps) => {
+const Weapon: React.FC<WeaponProps> = ({ item }: WeaponProps) => {
   return (
     <div>
-      {weapon.name}
-      <img src={`https://www.bungie.net${weapon.icon}`} />
       stats
       {item.stats.map((stat, key) => {
         return (
