@@ -17,6 +17,8 @@ import { components } from './bungieTypes'
 type BungieInventory = components['schemas']['Destiny.Entities.Inventory.DestinyInventoryComponent']
 type BungieCharacter = components['schemas']['Destiny.Entities.Characters.DestinyCharacterComponent']
 type BungieCharacterInventories = Record<string, BungieInventory>
+type BungieItemComponent = components['schemas']['Destiny.Entities.Items.DestinyItemComponent']
+type BungieItemComponents = components['schemas']['DestinyItemComponentSetOfint64']
 
 export interface Token extends BungieTokenResponse {
   expires_at: number
@@ -46,24 +48,31 @@ export const parseCharacters = (
 
 export interface CharacterInterface {
   itemHash: number
+  itemInstanceId?: number
   name: string
   characterId: string
   stats: Stat[]
   perks: Socket[]
+  itemInfo?: any
+  itemSockets?: any
+  reusablePlugs?: any
 }
 
 export const parseProfileInventory = (
-  profileInventory: BungieInventory
+  profileInventory: BungieInventory,
+  itemComponents: BungieItemComponents
 ): CharacterInterface[] => {
   if (profileInventory?.items === undefined) {
     return []
   }
+  // https://bungie-net.github.io/multi/schema_Destiny-Entities-Items-DestinyItemComponent.html#schema_Destiny-Entities-Items-DestinyItemComponent
+  const items: BungieItemComponent[] = profileInventory.items
 
-  return profileInventory.items
-    .map(({ itemHash }) => ({ itemHash }))
+  return items
     .filter(({ itemHash }) => isWeapon(itemHash))
     .map((item) => {
       const itemHash = item.itemHash || 0
+      const itemInstanceId = item.itemInstanceId || undefined
       const weapon = bungieInventoryItemDefinition.get(itemHash)
       const itemStats = weapon?.stats?.stats || {}
       const stats =
@@ -73,9 +82,27 @@ export const parseProfileInventory = (
             statHash: stat.statHash || 0,
             value: stat.value || 0,
           })) || []
+      const reusablePlugs =
+        itemComponents.reusablePlugs?.data?.[`${itemInstanceId}`]?.plugs || {}
+      const itemInfo =
+        itemComponents?.instances?.data?.[`${itemInstanceId}`] || {}
+      const itemSockets = itemComponents?.sockets?.data?.[
+        `${itemInstanceId}`
+      ]?.sockets?.map((perk) => {
+        const perkstats = getPerk(perk.plugHash || 0)
+
+        return {
+          ...perk,
+          perkstats,
+        }
+      })
 
       return {
         itemHash,
+        itemInstanceId,
+        itemInfo,
+        itemSockets,
+        reusablePlugs,
         name: weapon?.displayProperties?.name || '',
         characterId: '',
         stats: getStats(stats),
@@ -94,6 +121,7 @@ export const parseCharacterInventories = (
     .flatMap(([key, value]) =>
       value?.items?.map((item) => ({
         itemHash: item.itemHash || 0,
+        itemInstanceId: item.itemInstanceId || undefined,
         characterId: key,
       }))
     )
@@ -113,6 +141,7 @@ export const parseCharacterInventories = (
 
       return {
         itemHash,
+        itemInstanceId: item?.itemInstanceId,
         name: weapon?.displayProperties?.name || '',
         characterId: item?.characterId || '',
         stats: getStats(stats),
@@ -167,10 +196,11 @@ export const parseProfile = (profile: BungieProfileResponse): Profile => {
   const characterInventories =
     profile?.Response?.characterInventories?.data || {}
   const characterEquipment = profile?.Response?.characterEquipment?.data || {}
+  const itemComponents = profile?.Response?.itemComponents || {}
 
   return {
     characters: parseCharacters(characters),
-    vault: parseProfileInventory(vault),
+    vault: parseProfileInventory(vault, itemComponents),
     characterItems: parseCharacterInventories(characterInventories),
     characterEquipment: parseCharacterInventories(characterEquipment),
   }
@@ -288,21 +318,22 @@ export const getPerkInfo = (perks?: { plugItemHash?: number }[]): Perk[] => {
     return []
   }
 
-  return perks.map((perk) => {
-    const hash = perk.plugItemHash || 0
-    const item = bungieInventoryItemDefinition.get(hash)
-    const stats =
-      item?.investmentStats
-        ?.filter((stat) => stat.statTypeHash !== undefined && stat.value !== 0)
-        .map((stat) => ({
-          statHash: stat.statTypeHash || 0,
-          value: stat.value || 0,
-        })) || []
+  return perks.map((perk) => getPerk(perk.plugItemHash || 0))
+}
 
-    return {
-      perkHash: hash,
-      name: item?.displayProperties?.name || '',
-      stats: getStats(stats),
-    }
-  })
+const getPerk = (hash: number): Perk => {
+  const item = bungieInventoryItemDefinition.get(hash)
+  const stats =
+    item?.investmentStats
+      ?.filter((stat) => stat.statTypeHash !== undefined && stat.value !== 0)
+      .map((stat) => ({
+        statHash: stat.statTypeHash || 0,
+        value: stat.value || 0,
+      })) || []
+
+  return {
+    perkHash: hash,
+    name: item?.displayProperties?.name || '',
+    stats: getStats(stats),
+  }
 }
