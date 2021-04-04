@@ -5,6 +5,11 @@ import { components } from './bungieTypes'
 
 export type BungieUserResponse = components['responses']['User.UserMembershipData']['content']['application/json']
 export type BungieProfileResponse = components['responses']['Destiny.Responses.DestinyProfileResponse']['content']['application/json']
+
+type BungieItemActionRequest = components['schemas']['Destiny.Requests.Actions.DestinyItemActionRequest']
+type BungieItemTransferRequest = components['schemas']['Destiny.Requests.DestinyItemTransferRequest']
+type BungieItemActionResponse = components['responses']['int32']['content']['application/json']
+
 export interface BungieTokenResponse {
   access_token: string
   token_type: string
@@ -84,4 +89,65 @@ export const getUserProfile = ({
       Authorization: `${tokenType} ${accessToken}`,
     },
   }).then((res) => parseJsonOrThrow(res))
+}
+
+export interface EquipItemParams {
+  itemId: number
+  characterId: string
+  membershipType: number
+}
+
+export const equipItem = ({
+  itemId,
+  characterId,
+  membershipType,
+}: EquipItemParams): Promise<BungieItemActionResponse> => {
+  const body: BungieItemActionRequest = {
+    itemId,
+    characterId: parseInt(characterId, 10),
+    membershipType,
+  }
+
+  return fetch(
+    'https://www.bungie.net/Platform/Destiny2/Actions/Items/EquipItem/',
+    {
+      method: 'post',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    }
+  ).then((res) => parseJsonOrThrow(res))
+}
+
+export interface TransferItemParams {
+  itemHash: number
+  itemInstanceId: number
+  transferToVault: boolean
+  characterId: string
+  membershipType: number
+}
+
+export const transferItem = ({
+  characterId,
+  itemHash,
+  itemInstanceId,
+  membershipType,
+  transferToVault,
+}: TransferItemParams): Promise<BungieItemActionResponse> => {
+  const body: BungieItemTransferRequest = {
+    itemReferenceHash: itemHash, // item id
+    stackSize: 1,
+    transferToVault,
+    itemId: itemInstanceId, // instanceId
+    characterId: parseInt(characterId, 10),
+    membershipType,
+  }
+
+  return fetch(
+    'https://www.bungie.net/Platform/Destiny2/Actions/Items/TransferItem/',
+    {
+      method: 'post',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    }
+  ).then((res) => parseJsonOrThrow(res))
 }

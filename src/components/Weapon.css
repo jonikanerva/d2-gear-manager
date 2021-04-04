@@ -1,15 +1,14 @@
 .weaponName {
   color: white;
   font-size: 20px;
-  padding-bottom: 10px;
 }
 
 /* top | right | bottom | left */
 .weaponTile {
   max-width: 400px;
-  max-height: 200px;
+  height: 300px;
   overflow: hidden;
-  flex: 1 1 300px;
+  flex: 1 1 400px;
   padding: 5px 15px 5px 15px;
   background-position-x: right;
   background-position-y: bottom;
@@ -27,4 +26,15 @@
   padding-top: 8px;
   color: white;
   font-size: 10px;
+}
+
+.transferButtons {
+  color: white;
+  padding-top: 20px;
+}
+
+.location {
+  color: white;
+  font-size: 10px;
+  padding-bottom: 10px;
 }
