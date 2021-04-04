@@ -8,6 +8,8 @@ type BungiePlugSetDefinition = components['schemas']['Destiny.Definitions.Socket
 type BungieStatDefinition = components['schemas']['Destiny.Definitions.DestinyStatDefinition']
 type BungieSocketTypeDefinition = components['schemas']['Destiny.Definitions.Sockets.DestinySocketTypeDefinition']
 type BungieSocketCategoryDefinition = components['schemas']['Destiny.Definitions.Sockets.DestinySocketCategoryDefinition']
+type BungieClassDefinition = components['schemas']['Destiny.Definitions.DestinyClassDefinition']
+type BungieRaceDefinition = components['schemas']['Destiny.Definitions.DestinyRaceDefinition']
 
 export const bungieInventoryItemDefinition = new Map<
   number,
@@ -26,6 +28,8 @@ export const bungieSocketCategoryDefinition = new Map<
   number,
   BungieSocketCategoryDefinition
 >()
+export const bungieClassDefinition = new Map<number, BungieClassDefinition>()
+export const bungieRaceDefinition = new Map<number, BungieRaceDefinition>()
 
 const readFile = (filename: string, store: Map<any, any>): Promise<void> => {
   console.log('Reading', filename)
@@ -46,29 +50,37 @@ const readFile = (filename: string, store: Map<any, any>): Promise<void> => {
     })
 }
 
-export const loadDestinyInventoryItemDefinition = (): Promise<void> =>
+const loadDestinyInventoryItemDefinition = (): Promise<void> =>
   readFile('DestinyInventoryItemDefinition.json', bungieInventoryItemDefinition)
 
-export const loadDestinyPlugSetDefinition = (): Promise<void> =>
+const loadDestinyPlugSetDefinition = (): Promise<void> =>
   readFile('DestinyPlugSetDefinition.json', bungiePlugSetDefinition)
 
-export const loadDestinyStatDefinition = (): Promise<void> =>
+const loadDestinyStatDefinition = (): Promise<void> =>
   readFile('DestinyStatDefinition.json', bungieStatDefinition)
 
-export const loadDestinySocketTypeDefinition = (): Promise<void> =>
+const loadDestinySocketTypeDefinition = (): Promise<void> =>
   readFile('DestinySocketTypeDefinition.json', bungieSocketTypeDefinition)
 
-export const loadDestinySocketCategoryDefinition = (): Promise<void> =>
+const loadDestinySocketCategoryDefinition = (): Promise<void> =>
   readFile(
     'DestinySocketCategoryDefinition.json',
     bungieSocketCategoryDefinition
   )
 
+const loadDestinyClassDefinition = (): Promise<void> =>
+  readFile('DestinyClassDefinition.json', bungieClassDefinition)
+
+const loadDestinyRaceDefinition = (): Promise<void> =>
+  readFile('DestinyRaceDefinition.json', bungieRaceDefinition)
+
 export const loadDestinyData = (): Promise<unknown> =>
   Promise.all([
+    loadDestinyClassDefinition(),
     loadDestinyInventoryItemDefinition(),
     loadDestinyPlugSetDefinition(),
-    loadDestinyStatDefinition(),
-    loadDestinySocketTypeDefinition(),
+    loadDestinyRaceDefinition(),
     loadDestinySocketCategoryDefinition(),
+    loadDestinySocketTypeDefinition(),
+    loadDestinyStatDefinition(),
   ]).then(() => console.log('All data read to memory.'))
