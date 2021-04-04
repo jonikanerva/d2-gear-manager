@@ -6,6 +6,7 @@ import { Server } from 'http'
 import { getAuth } from './controllers/getAuth'
 import { getRoot } from './controllers/getRoot'
 import { postProfile } from './controllers/postProfile'
+import { postTransfer } from './controllers/postTransfer'
 
 const port = 3000
 
@@ -24,6 +25,7 @@ export const createExpress = (): Application => {
 
   app.get('/api/auth', getAuth)
   app.post('/api/profile', postProfile)
+  app.post('/api/transfer', postTransfer)
 
   return app
 }

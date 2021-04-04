@@ -159,5 +159,5 @@ export const transferItem = ({
         Authorization: `${tokenType} ${accessToken}`,
       },
     }
-  ).then((res) => parseJsonOrThrow(res))
+  ).then((res) => res.json())
 }
