@@ -63,25 +63,27 @@ export const getUserProfile = ({
   primaryMembershipId,
 }: GetUserProfileParams): Promise<BungieProfileResponse> => {
   // https://bungie-net.github.io/multi/schema_Destiny-DestinyComponentType.html#schema_Destiny-DestinyComponentType
-  const profileInventories = 102 // profile-level inventories, such as your Vault buckets
-  const characters = 200 // summary info about each of the characters in the profile
-  const characterInventories = 201 // non-equipped items on the character(s)
-  const characterEquipment = 205 // equipped items on the character(s)
-  const itemComponents = 300 //  basic info about instanced items
-  const itemSockets = 305 // all info relevant to the sockets on items that have them
-  const itemReusablePlugs = 310 // what plugs *could* be inserted into a socket
+  const profileInventories = 102 //   Response.profileInventory             - profile-level inventories, such as your Vault buckets
+  const characters = 200 //           Response.characters                   - summary info about each of the characters in the profile
+  const characterInventories = 201 // Response.characterInventories         - non-equipped items on the character(s)
+  const characterEquipment = 205 //   Response.characterEquipment           - equipped items on the character(s)
+  const itemComponents = 300 //       Response.itemComponents.instances     - basic info about instanced items
+  const itemStats = 304 //            Response.itemComponents.stats         - item's stats
+  const itemSockets = 305 //          Response.itemComponents.sockets       - all info relevant to the sockets on items that have them
+  const itemReusablePlugs = 310 //    Response.itemComponents.reusablePlugs - what plugs *could* be inserted into a socket
   const components = [
-    characterEquipment,
-    characterInventories,
-    characters,
-    itemComponents,
-    itemReusablePlugs,
-    itemSockets,
     profileInventories,
+    characters,
+    characterInventories,
+    characterEquipment,
+    itemComponents,
+    itemStats,
+    itemSockets,
+    itemReusablePlugs,
   ].join(',')
-  const url = `https://www.bungie.net/Platform/Destiny2/${memberShipType}/Profile/${primaryMembershipId}?components=102,200,201,205,300,302,304,305,301,306,307,308,309,310`
+  const url = `https://www.bungie.net/Platform/Destiny2/${memberShipType}/Profile/${primaryMembershipId}?components=${components}`
 
-  console.log('Fetching ', url, components)
+  console.log('Fetching ', url)
 
   return fetch(url, {
     headers: {
@@ -124,6 +126,8 @@ export interface TransferItemParams {
   transferToVault: boolean
   characterId: string
   membershipType: number
+  accessToken: string
+  tokenType: string
 }
 
 export const transferItem = ({
@@ -132,6 +136,8 @@ export const transferItem = ({
   itemInstanceId,
   membershipType,
   transferToVault,
+  accessToken,
+  tokenType,
 }: TransferItemParams): Promise<BungieItemActionResponse> => {
   const body: BungieItemTransferRequest = {
     itemReferenceHash: itemHash, // item id
@@ -147,7 +153,11 @@ export const transferItem = ({
     {
       method: 'post',
       body: JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': config.bungieApiKey,
+        Authorization: `${tokenType} ${accessToken}`,
+      },
     }
   ).then((res) => parseJsonOrThrow(res))
 }
