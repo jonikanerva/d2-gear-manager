@@ -6,8 +6,8 @@
 
 /* top | right | bottom | left */
 .weaponTile {
-  width: 300px;
-  height: 200px;
+  max-width: 400px;
+  max-height: 200px;
   overflow: hidden;
   flex: 1 1 300px;
   padding: 5px 15px 5px 15px;

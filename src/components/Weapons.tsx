@@ -1,23 +1,76 @@
-import React from 'react'
+import { debounce } from 'lodash'
+import React, { useCallback, useEffect, useState } from 'react'
 
-import { Profile } from '../modules/bungieItems'
+import { Item, Profile } from '../modules/bungieItems'
 import Weapon from './Weapon'
 import styles from './Weapons.css'
 
+type Event = React.ChangeEvent<HTMLInputElement>
 interface WeaponProps {
   profile: Profile
 }
 
 const Weapons: React.FC<WeaponProps> = ({ profile }: WeaponProps) => {
-  const items = profile.items.sort((a, b) => a.name.localeCompare(b.name))
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [weapons, setWeapons] = useState<Item[]>(profile.items)
+
+  useEffect(() => {
+    if (searchTerm.length > 2) {
+      const search = searchWeapons(searchTerm)
+
+      setWeapons(search)
+    } else {
+      setWeapons(profile.items)
+    }
+  }, [searchTerm, profile])
+
+  const handleSearchOnChange = debounce((event: Event) => {
+    setSearchTerm(event.target.value)
+  }, 200)
+
+  const searchWeapons = useCallback(
+    (searchTerm: string): Item[] =>
+      profile.items.filter((weapon): boolean => {
+        const searchableFields = [
+          weapon.name,
+          weapon.typeName,
+          weapon.tierTypeName,
+          ...weapon.equippedPerks.map(({ name }) => name),
+          ...weapon.availablePerks.map(({ name }) => name),
+          ...weapon.stats.map(({ name }) => name),
+        ].join(' ')
+
+        return new RegExp(searchTerm, 'i').test(searchableFields)
+      }),
+    [searchTerm, profile]
+  )
+
+  const sortWeapons = useCallback(
+    (weapons: Item[]): Item[] =>
+      weapons.sort((a, b) => a.name.localeCompare(b.name)),
+    [weapons]
+  )
+
+  const items = sortWeapons(weapons)
 
   return (
     <div>
       <h2>Weapons</h2>
+      <input
+        autoCapitalize="off"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck="false"
+        type="text"
+        className={styles.searchBox}
+        onChange={handleSearchOnChange}
+      />
       <div className={styles.weapons}>
-        {items.map((item, key) => (
-          <Weapon key={key} item={item} />
-        ))}
+        {items.map((item) => {
+          const key = `${item.itemHash}${item.itemInstanceId}`
+
+          return <Weapon item={item} key={key} />
+        })}
       </div>
     </div>
   )
