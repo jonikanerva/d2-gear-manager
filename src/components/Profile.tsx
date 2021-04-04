@@ -59,7 +59,7 @@ const Profile: React.FC<ProfileProps> = ({
 
   return (
     <div>
-      <Weapons profile={profile} />
+      <Weapons profile={profile} membershipType={memberShipType} />
     </div>
   )
 }

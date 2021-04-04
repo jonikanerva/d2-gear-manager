@@ -8,9 +8,13 @@ import styles from './Weapons.css'
 type Event = React.ChangeEvent<HTMLInputElement>
 interface WeaponProps {
   profile: Profile
+  membershipType: number
 }
 
-const Weapons: React.FC<WeaponProps> = ({ profile }: WeaponProps) => {
+const Weapons: React.FC<WeaponProps> = ({
+  profile,
+  membershipType,
+}: WeaponProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [weapons, setWeapons] = useState<Item[]>(profile.items)
 
@@ -69,7 +73,14 @@ const Weapons: React.FC<WeaponProps> = ({ profile }: WeaponProps) => {
         {items.map((item) => {
           const key = `${item.itemHash}${item.itemInstanceId}`
 
-          return <Weapon item={item} key={key} />
+          return (
+            <Weapon
+              item={item}
+              key={key}
+              characters={profile.characters}
+              membershipType={membershipType}
+            />
+          )
         })}
       </div>
     </div>
