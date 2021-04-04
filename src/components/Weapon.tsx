@@ -1,13 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Character } from '../modules/bungieCharacter'
 
 import { Item } from '../modules/bungieItems'
+import {
+  TransferReponse,
+  TransferRequest,
+} from '../server/controllers/postTransfer'
 import styles from './Weapon.css'
 
 interface WeaponProps {
   item: Item
   characters: Character[]
   membershipType: number
+  accessToken: string
+  tokenType: string
 }
 
 const screenshot = (hash: number) =>
@@ -15,6 +21,13 @@ const screenshot = (hash: number) =>
 
 const getCharacter = (hash: string, characters: Character[]): Character =>
   characters.filter(({ characterId }) => characterId === hash)?.[0]
+
+const transferItem = (params: TransferRequest): Promise<TransferReponse> =>
+  fetch('/api/transfer', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  }).then((response) => response.json())
 
 const prepareButtons = (
   item: Item,
@@ -58,10 +71,24 @@ const Weapon: React.FC<WeaponProps> = ({
   item,
   characters,
   membershipType,
+  accessToken,
+  tokenType,
 }: WeaponProps) => {
   const src = screenshot(item.itemHash)
   const character = getCharacter(item.storedAt, characters)
   const buttons = prepareButtons(item, characters, membershipType)
+  const [transferring, setTransferring] = useState<boolean>(false)
+
+  const handleClick = (params: TransferRequest) => {
+    setTransferring(true)
+
+    return transferItem(params)
+      .then((json) => console.log(json))
+      .then(() => {
+        setTransferring(false)
+      })
+      .catch((error) => console.error('error', error))
+  }
 
   return (
     <div
@@ -90,10 +117,23 @@ const Weapon: React.FC<WeaponProps> = ({
         Perks: {item.equippedPerks.map((perk) => perk.name).join(', ')}
       </div>
       <div className={styles.transferButtons}>
-        {buttons.map((button, key) => (
-          <button key={key}>{button.label}</button>
-        ))}
-        {buttons.length === 0 ? 'Unequip first to transfer' : ''}
+        {transferring === true ? (
+          <div>TRANSFERRING!!</div>
+        ) : (
+          <div>
+            {buttons.map((button, key) => (
+              <button
+                key={key}
+                onClick={() =>
+                  handleClick({ ...button, accessToken, tokenType })
+                }
+              >
+                {button.label}
+              </button>
+            ))}
+            {buttons.length === 0 ? 'Unequip first to transfer' : ''}
+          </div>
+        )}
       </div>
     </div>
   )

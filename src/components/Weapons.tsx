@@ -9,11 +9,15 @@ type Event = React.ChangeEvent<HTMLInputElement>
 interface WeaponProps {
   profile: Profile
   membershipType: number
+  accessToken: string
+  tokenType: string
 }
 
 const Weapons: React.FC<WeaponProps> = ({
   profile,
   membershipType,
+  accessToken,
+  tokenType,
 }: WeaponProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [weapons, setWeapons] = useState<Item[]>(profile.items)
@@ -79,6 +83,8 @@ const Weapons: React.FC<WeaponProps> = ({
               key={key}
               characters={profile.characters}
               membershipType={membershipType}
+              accessToken={accessToken}
+              tokenType={tokenType}
             />
           )
         })}
