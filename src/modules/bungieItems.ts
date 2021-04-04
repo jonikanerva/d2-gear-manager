@@ -68,6 +68,7 @@ const parseInventoryItemsData = (
 
 export interface Item {
   itemHash: number
+  itemInstanceId: number
   name: string
   icon: string
   type: number
@@ -135,6 +136,7 @@ const prepareItems = (
 
       return {
         itemHash: weapon.itemHash,
+        itemInstanceId: weapon.itemInstanceId,
         name: weaponInfo.name,
         icon: weaponInfo.icon,
         type: weaponInfo.type,
