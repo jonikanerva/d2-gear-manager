@@ -63,6 +63,8 @@ const Weapons: React.FC<WeaponProps> = ({
 
   const items = sortWeapons(weapons)
 
+  console.log('weapons', items)
+
   return (
     <div>
       <h2>Weapons</h2>

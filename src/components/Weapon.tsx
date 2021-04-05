@@ -45,18 +45,19 @@ const prepareButtons = (
     transferToVault: false,
   }))
 
-  const moveToVault = item.equipped
-    ? []
-    : [
-        {
-          label: 'Transfer to Vault',
-          characterId: item.storedAt,
-          itemHash: item.itemHash,
-          itemInstanceId: item.itemInstanceId,
-          membershipType,
-          transferToVault: true,
-        },
-      ]
+  const moveToVault =
+    item.equipped || item.bucket === 'Lost Items'
+      ? []
+      : [
+          {
+            label: 'Transfer to Vault',
+            characterId: item.storedAt,
+            itemHash: item.itemHash,
+            itemInstanceId: item.itemInstanceId,
+            membershipType,
+            transferToVault: true,
+          },
+        ]
 
   return inVault ? moveToCharacters : moveToVault
 }
@@ -85,6 +86,11 @@ const Weapon: React.FC<WeaponProps> = ({
       })
   }
 
+  const atPostmaster = item.bucket === 'Lost Items'
+  const inVault = character === undefined
+  const onCharacter = atPostmaster === false && character !== undefined
+  const isEquipped = item.equipped === true
+
   return (
     <div
       className={styles.weaponTile}
@@ -96,10 +102,11 @@ const Weapon: React.FC<WeaponProps> = ({
         {item.name} ({item.powerLevel})
       </div>
       <div className={styles.location}>
-        {item.equipped === true ? 'Equipped ' : ''}
-        {character === undefined
-          ? 'In Vault.'
-          : `On ${character.gender} ${character.class} (${character.light}).`}
+        {isEquipped && 'Equipped '}
+        {inVault && 'In Vault'}
+        {onCharacter &&
+          `On ${character.gender} ${character.class} (${character.light})`}
+        {atPostmaster && 'At Postmaster'}
       </div>
       <div className={styles.stats}>
         {item.stats.map((stat, key) => (
@@ -117,7 +124,9 @@ const Weapon: React.FC<WeaponProps> = ({
         ) : (
           <div>
             {buttons.length === 0
-              ? 'Unequip first to transfer'
+              ? atPostmaster
+                ? 'Pull from postmaster first to transfer'
+                : 'Unequip first to transfer'
               : buttons.map((button, key) => (
                   <button
                     key={key}
