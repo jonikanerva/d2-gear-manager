@@ -11,8 +11,9 @@
   flex: 1 1 400px;
   padding: 5px 15px 5px 15px;
   background-position-x: right;
-  background-position-y: bottom;
+  background-position-y: center;
   background-size: cover;
+  background-repeat: no-repeat;
   margin: 5px;
   border-radius: 4px;
 }
