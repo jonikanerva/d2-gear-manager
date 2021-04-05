@@ -31,6 +31,7 @@ type BungieClassDefinition = components['schemas']['Destiny.Definitions.DestinyC
 type BungieRaceDefinition = components['schemas']['Destiny.Definitions.DestinyRaceDefinition']
 type BungieInventoryBucketDefinition = components['schemas']['Destiny.Definitions.DestinyInventoryBucketDefinition']
 type BungieDamageTypeDefinition = components['schemas']['Destiny.Definitions.DestinyDamageTypeDefinition']
+type BungieEquipmentSlotDefinition = components['schemas']['Destiny.Definitions.DestinyEquipmentSlotDefinition']
 
 export const bungieInventoryItemDefinition = new Map<
   number,
@@ -58,6 +59,10 @@ export const bungieInventoryBucketDefinition = new Map<
 export const bungieDamageTypeDefinition = new Map<
   number,
   BungieDamageTypeDefinition
+>()
+export const bungieEquipmentSlotDefinition = new Map<
+  number,
+  BungieEquipmentSlotDefinition
 >()
 
 const loadDestinyInventoryItemDefinition = (): Promise<void> =>
@@ -93,6 +98,9 @@ const loadDestinyInventoryBucketDefinition = (): Promise<void> =>
 const loadDestinyDamageTypeDefinition = (): Promise<void> =>
   readFile('DestinyDamageTypeDefinition.json', bungieDamageTypeDefinition)
 
+const loadDestinyEquipmentSlotDefinition = (): Promise<void> =>
+  readFile('DestinyEquipmentSlotDefinition.json', bungieEquipmentSlotDefinition)
+
 export const loadDestinyData = (): Promise<unknown> =>
   Promise.all([
     loadDestinyClassDefinition(),
@@ -104,4 +112,5 @@ export const loadDestinyData = (): Promise<unknown> =>
     loadDestinyStatDefinition(),
     loadDestinyInventoryBucketDefinition(),
     loadDestinyDamageTypeDefinition(),
+    loadDestinyEquipmentSlotDefinition(),
   ]).then(() => console.log('All data read to memory.'))

@@ -104,6 +104,8 @@ export interface Item {
   index: number
   damageType: number
   damageTypeName: string
+  ammoType: string
+  equipmentSlot: string
   powerLevel: number
   bucket: string
   stats: Stat[]
@@ -177,6 +179,8 @@ const prepareItems = (
         typeName: weaponInfo.typeName,
         tierType: weaponInfo.tierType,
         tierTypeName: weaponInfo.tierTypeName,
+        ammoType: weaponInfo.ammoType,
+        equipmentSlot: weaponInfo.equipmentSlot,
         storedAt: weapon.storedAt,
         equipped: isEquipped,
         index: weaponInfo.index,

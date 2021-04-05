@@ -102,9 +102,9 @@ const Weapon: React.FC<WeaponProps> = ({
         {item.name} ({item.powerLevel})
       </div>
       <div className={styles.location}>
-        {item.damageTypeName} {item.typeName}
-      </div>
-      <div className={styles.location}>
+        {item.damageTypeName} {item.typeName}, {item.ammoType} Ammo,{' '}
+        {item.equipmentSlot} Slot
+        <br />
         {isEquipped && 'Equipped '}
         {inVault && 'In Vault'}
         {onCharacter &&
