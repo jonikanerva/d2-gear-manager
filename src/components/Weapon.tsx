@@ -35,13 +35,17 @@ const prepareButtons = (
   membershipType: number
 ) => {
   const inVault = item.storedAt === '0'
-  const isEquipped = item.equipped === true
 
-  if (isEquipped === true) {
-    return []
-  }
+  const moveToCharacters = characters.map((character) => ({
+    label: `Transfer to ${character.gender} ${character.class} (${character.light}).`,
+    characterId: character.characterId,
+    itemHash: item.itemHash,
+    itemInstanceId: item.itemInstanceId,
+    membershipType,
+    transferToVault: false,
+  }))
 
-  const possibileToVault = inVault
+  const moveToVault = item.equipped
     ? []
     : [
         {
@@ -53,18 +57,8 @@ const prepareButtons = (
           transferToVault: true,
         },
       ]
-  const possibleToMove = characters
-    .filter(({ characterId }) => characterId !== item.storedAt)
-    .map((character) => ({
-      label: `Transfer to ${character.gender} ${character.class} (${character.light}).`,
-      characterId: character.characterId,
-      itemHash: item.itemHash,
-      itemInstanceId: item.itemInstanceId,
-      membershipType,
-      transferToVault: false,
-    }))
 
-  return [...possibileToVault, ...possibleToMove]
+  return inVault ? moveToCharacters : moveToVault
 }
 
 const Weapon: React.FC<WeaponProps> = ({
