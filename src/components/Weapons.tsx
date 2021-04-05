@@ -43,6 +43,8 @@ const Weapons: React.FC<WeaponProps> = ({
           weapon.name,
           weapon.typeName,
           weapon.tierTypeName,
+          weapon.itemInstanceId,
+          weapon.storedAt !== '0' ? weapon.storedAt : '',
           ...weapon.equippedPerks.map(({ name }) => name),
           ...weapon.availablePerks.map(({ name }) => name),
           ...weapon.stats.map(({ name }) => name),
