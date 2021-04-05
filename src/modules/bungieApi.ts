@@ -139,14 +139,15 @@ export const transferItem = ({
   accessToken,
   tokenType,
 }: TransferItemParams): Promise<BungieItemActionResponse> => {
-  const body: BungieItemTransferRequest = {
-    itemReferenceHash: itemHash, // item id
-    stackSize: 1,
-    transferToVault,
-    itemId: itemInstanceId, // instanceId
-    characterId: parseInt(characterId, 10),
-    membershipType,
+  const body = {
+    itemReferenceHash: `${itemHash}`,
+    stackSize: '1',
+    transferToVault: `${transferToVault}`,
+    itemId: `${itemInstanceId}`,
+    characterId: `${characterId}`,
+    membershipType: `${membershipType}`,
   }
+  console.log('transferring body', JSON.stringify(body, null, 2))
 
   return fetch(
     'https://www.bungie.net/Platform/Destiny2/Actions/Items/TransferItem/',
@@ -159,5 +160,11 @@ export const transferItem = ({
         Authorization: `${tokenType} ${accessToken}`,
       },
     }
-  ).then((res) => res.json())
+  )
+    .then((res) => res.json())
+    .then((json) => {
+      console.log('response', JSON.stringify(json, null, 2))
+
+      return json
+    })
 }
