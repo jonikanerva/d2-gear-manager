@@ -37,7 +37,7 @@ const prepareButtons = (
   const inVault = item.storedAt === '0'
 
   const moveToCharacters = characters.map((character) => ({
-    label: `Transfer to ${character.gender} ${character.class} (${character.light}).`,
+    label: `Transfer to ${character.gender} ${character.class} (${character.light})`,
     characterId: character.characterId,
     itemHash: item.itemHash,
     itemInstanceId: item.itemInstanceId,
@@ -49,7 +49,7 @@ const prepareButtons = (
     ? []
     : [
         {
-          label: `Transfer to Vault.`,
+          label: 'Transfer to Vault',
           characterId: item.storedAt,
           itemHash: item.itemHash,
           itemInstanceId: item.itemInstanceId,
@@ -71,17 +71,18 @@ const Weapon: React.FC<WeaponProps> = ({
   const src = screenshot(item.itemHash)
   const character = getCharacter(item.storedAt, characters)
   const buttons = prepareButtons(item, characters, membershipType)
-  const [transferring, setTransferring] = useState<boolean>(false)
+  const [transferring, setTransferring] = useState<string>('')
 
   const handleClick = (params: TransferRequest) => {
-    setTransferring(true)
+    setTransferring('Transferring')
 
     return transferItem(params)
-      .then((json) => console.log(json))
-      .then(() => {
-        setTransferring(false)
+      .then((json) => {
+        setTransferring(json.message)
       })
-      .catch((error) => console.error('error', error))
+      .catch((error) => {
+        setTransferring(error)
+      })
   }
 
   return (
@@ -111,21 +112,22 @@ const Weapon: React.FC<WeaponProps> = ({
         Perks: {item.equippedPerks.map((perk) => perk.name).join(', ')}
       </div>
       <div className={styles.transferButtons}>
-        {transferring === true ? (
-          <div>TRANSFERRING!!</div>
+        {transferring !== '' ? (
+          <div>{transferring}</div>
         ) : (
           <div>
-            {buttons.map((button, key) => (
-              <button
-                key={key}
-                onClick={() =>
-                  handleClick({ ...button, accessToken, tokenType })
-                }
-              >
-                {button.label}
-              </button>
-            ))}
-            {buttons.length === 0 ? 'Unequip first to transfer' : ''}
+            {buttons.length === 0
+              ? 'Unequip first to transfer'
+              : buttons.map((button, key) => (
+                  <button
+                    key={key}
+                    onClick={() =>
+                      handleClick({ ...button, accessToken, tokenType })
+                    }
+                  >
+                    {button.label}
+                  </button>
+                ))}
           </div>
         )}
       </div>
