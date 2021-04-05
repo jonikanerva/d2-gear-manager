@@ -10,6 +10,7 @@ type BungieSocketTypeDefinition = components['schemas']['Destiny.Definitions.Soc
 type BungieSocketCategoryDefinition = components['schemas']['Destiny.Definitions.Sockets.DestinySocketCategoryDefinition']
 type BungieClassDefinition = components['schemas']['Destiny.Definitions.DestinyClassDefinition']
 type BungieRaceDefinition = components['schemas']['Destiny.Definitions.DestinyRaceDefinition']
+type BungieInventoryBucketDefinition = components['schemas']['Destiny.Definitions.DestinyInventoryBucketDefinition']
 
 export const bungieInventoryItemDefinition = new Map<
   number,
@@ -30,6 +31,10 @@ export const bungieSocketCategoryDefinition = new Map<
 >()
 export const bungieClassDefinition = new Map<number, BungieClassDefinition>()
 export const bungieRaceDefinition = new Map<number, BungieRaceDefinition>()
+export const bungieInventoryBucketDefinition = new Map<
+  number,
+  BungieInventoryBucketDefinition
+>()
 
 const readFile = (filename: string, store: Map<any, any>): Promise<void> => {
   console.log('Reading', filename)
@@ -74,6 +79,12 @@ const loadDestinyClassDefinition = (): Promise<void> =>
 const loadDestinyRaceDefinition = (): Promise<void> =>
   readFile('DestinyRaceDefinition.json', bungieRaceDefinition)
 
+const loadDestinyInventoryBucketDefinition = (): Promise<void> =>
+  readFile(
+    'DestinyInventoryBucketDefinition.json',
+    bungieInventoryBucketDefinition
+  )
+
 export const loadDestinyData = (): Promise<unknown> =>
   Promise.all([
     loadDestinyClassDefinition(),
@@ -83,4 +94,5 @@ export const loadDestinyData = (): Promise<unknown> =>
     loadDestinySocketCategoryDefinition(),
     loadDestinySocketTypeDefinition(),
     loadDestinyStatDefinition(),
+    loadDestinyInventoryBucketDefinition(),
   ]).then(() => console.log('All data read to memory.'))
