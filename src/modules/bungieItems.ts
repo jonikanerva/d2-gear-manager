@@ -134,6 +134,10 @@ const prepareItems = (
           )
           .map(({ plugHash }): Perk => ({ ...getPerk(plugHash || 0) })) || []
 
+      // equipped means in character inventory, if item is not in vault
+      // and not "equipped" it means that it's actually equipped
+      const isEquipped = weapon.storedAt !== '0' && weapon.equipped !== true
+
       return {
         itemHash: weapon.itemHash,
         itemInstanceId: weapon.itemInstanceId,
@@ -144,7 +148,7 @@ const prepareItems = (
         tierType: weaponInfo.tierType,
         tierTypeName: weaponInfo.tierTypeName,
         storedAt: weapon.storedAt,
-        equipped: weapon.equipped,
+        equipped: isEquipped,
         index: weaponInfo.index,
         damageType: itemInfo.damageType || 0,
         powerLevel: itemInfo.primaryStat?.value || 0,
