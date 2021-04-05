@@ -10,3 +10,9 @@
   height: 35px;
   font-size: 20px;
 }
+
+.heading {
+  font-size: 40px;
+  color: black;
+  padding-bottom: 3px;
+}

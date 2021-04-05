@@ -2,3 +2,17 @@
   font-family: system-ui, -apple-system, sans-serif;
   box-sizing: border-box;
 }
+
+.centeredHeading {
+  font-size: 40px;
+  color: black;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.link {
+  font-size: 40px;
+  color: black;
+}

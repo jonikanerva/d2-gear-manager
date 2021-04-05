@@ -68,7 +68,7 @@ const Weapons: React.FC<WeaponProps> = ({
 
   return (
     <div>
-      <h2>Weapons</h2>
+      <div className={styles.heading}>Weapons</div>
       <input
         autoCapitalize="off"
         autoComplete="off"

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { ProfileResponse } from '../server/controllers/postProfile'
+import css from './App.css'
 import Weapons from './Weapons'
 
 interface ProfileProps {
@@ -44,15 +45,19 @@ const Profile: React.FC<ProfileProps> = ({
   }, [accessToken, tokenType, memberShipType, primaryMembershipId])
 
   if (error === true) {
-    return <h1>💩 An error occured while fetching profile! 💩</h1>
+    return (
+      <div className={css.centeredHeading}>
+        💩 An error occured while fetching profile! 💩
+      </div>
+    )
   }
 
   if (loading === true) {
-    return <h1>Loading profile... ⏳</h1>
+    return <div className={css.centeredHeading}>Loading profile... ⏳</div>
   }
 
   if (profile === undefined) {
-    return <h1>💩 Profile not found! 💩</h1>
+    return <div className={css.centeredHeading}>💩 Profile not found! 💩</div>
   }
 
   console.log('your profile', profile)

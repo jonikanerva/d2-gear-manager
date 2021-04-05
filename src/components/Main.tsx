@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
 import { AuthResponse } from '../server/controllers/getAuth'
+import css from './App.css'
 import { getAuth } from './localStorage'
-import css from './Main.css'
 import Profile from './Profile'
 
 const Main: React.FC = () => {
@@ -27,10 +27,12 @@ const Main: React.FC = () => {
       primaryMembershipId={storage.primaryMembershipId}
     />
   ) : (
-    <div>
-      <a className={css.loginLink} href={loginUrl}>
-        👉 Please Login with Bungie 👈
+    <div className={css.centeredHeading}>
+      👉
+      <a className={css.link} href={loginUrl}>
+        Login with Bungie
       </a>
+      👈
     </div>
   )
 }
