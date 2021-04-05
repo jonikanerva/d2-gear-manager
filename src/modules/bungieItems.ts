@@ -1,3 +1,4 @@
+import { bungieInventoryBucketDefinition } from '../database'
 import { BungieProfileResponse } from './bungieApi'
 import { Character, parseCharacters } from './bungieCharacter'
 import { getPerk, Perk } from './bungiePerks'
@@ -14,6 +15,7 @@ export interface ItemHash {
   itemHash: number
   itemInstanceId: number
   storedAt: string
+  bucket: string
   equipped?: boolean
 }
 
@@ -23,11 +25,16 @@ const parseVaultItems = (
   const vaultItemsData = vaultItems?.data?.items || []
 
   return vaultItemsData.map(
-    (item): ItemHash => ({
-      itemHash: item.itemHash || 0,
-      itemInstanceId: item.itemInstanceId || 0,
-      storedAt: '0',
-    })
+    (item): ItemHash => {
+      const bucket = bungieInventoryBucketDefinition.get(item.bucketHash || 0)
+
+      return {
+        itemHash: item.itemHash || 0,
+        itemInstanceId: item.itemInstanceId || 0,
+        bucket: bucket?.displayProperties?.name || '',
+        storedAt: '0',
+      }
+    }
   )
 }
 
@@ -39,12 +46,19 @@ const parseEquippedItems = (
   return Object.entries(equippedItemsData).flatMap(
     ([key, value]) =>
       value?.items?.map(
-        (item): ItemHash => ({
-          itemHash: item.itemHash || 0,
-          itemInstanceId: item.itemInstanceId || 0,
-          storedAt: key,
-          equipped: true,
-        })
+        (item): ItemHash => {
+          const bucket = bungieInventoryBucketDefinition.get(
+            item.bucketHash || 0
+          )
+
+          return {
+            itemHash: item.itemHash || 0,
+            itemInstanceId: item.itemInstanceId || 0,
+            storedAt: key,
+            bucket: bucket?.displayProperties?.name || '',
+            equipped: true,
+          }
+        }
       ) || []
   )
 }
@@ -57,11 +71,18 @@ const parseInventoryItemsData = (
   return Object.entries(inventoryItemsData).flatMap(
     ([key, value]) =>
       value?.items?.map(
-        (item): ItemHash => ({
-          itemHash: item.itemHash || 0,
-          itemInstanceId: item.itemInstanceId || 0,
-          storedAt: key,
-        })
+        (item): ItemHash => {
+          const bucket = bungieInventoryBucketDefinition.get(
+            item.bucketHash || 0
+          )
+
+          return {
+            itemHash: item.itemHash || 0,
+            itemInstanceId: item.itemInstanceId || 0,
+            bucket: bucket?.displayProperties?.name || '',
+            storedAt: key,
+          }
+        }
       ) || []
   )
 }
@@ -80,6 +101,7 @@ export interface Item {
   index: number
   damageType: number
   powerLevel: number
+  bucket: string
   stats: Stat[]
   equippedPerks: Perk[]
   availablePerks: Perk[]
@@ -152,6 +174,7 @@ const prepareItems = (
         index: weaponInfo.index,
         damageType: itemInfo.damageType || 0,
         powerLevel: itemInfo.primaryStat?.value || 0,
+        bucket: weapon.bucket,
         stats: itemStats,
         equippedPerks: itemSockets,
         availablePerks: reusablePlugs,
