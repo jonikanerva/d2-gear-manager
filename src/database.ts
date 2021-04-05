@@ -3,6 +3,25 @@ import path from 'path'
 
 import { components } from './modules/bungieTypes'
 
+const readFile = (filename: string, store: Map<any, any>): Promise<void> => {
+  console.log('Reading', filename)
+
+  return fs
+    .readFile(path.resolve(__dirname, `../data/${filename}`), {
+      encoding: 'utf8',
+    })
+    .then((file) => JSON.parse(file))
+    .then((json) => Object.values(json))
+    .then((values) => {
+      values.forEach((value: any) => {
+        store.set(value.hash || 0, value)
+      })
+    })
+    .then(() => {
+      store.delete(0)
+    })
+}
+
 export type BungieInventoryItemDefinition = components['schemas']['Destiny.Definitions.DestinyInventoryItemDefinition']
 type BungiePlugSetDefinition = components['schemas']['Destiny.Definitions.Sockets.DestinyPlugSetDefinition']
 type BungieStatDefinition = components['schemas']['Destiny.Definitions.DestinyStatDefinition']
@@ -11,6 +30,7 @@ type BungieSocketCategoryDefinition = components['schemas']['Destiny.Definitions
 type BungieClassDefinition = components['schemas']['Destiny.Definitions.DestinyClassDefinition']
 type BungieRaceDefinition = components['schemas']['Destiny.Definitions.DestinyRaceDefinition']
 type BungieInventoryBucketDefinition = components['schemas']['Destiny.Definitions.DestinyInventoryBucketDefinition']
+type BungieDamageTypeDefinition = components['schemas']['Destiny.Definitions.DestinyDamageTypeDefinition']
 
 export const bungieInventoryItemDefinition = new Map<
   number,
@@ -35,25 +55,10 @@ export const bungieInventoryBucketDefinition = new Map<
   number,
   BungieInventoryBucketDefinition
 >()
-
-const readFile = (filename: string, store: Map<any, any>): Promise<void> => {
-  console.log('Reading', filename)
-
-  return fs
-    .readFile(path.resolve(__dirname, `../data/${filename}`), {
-      encoding: 'utf8',
-    })
-    .then((file) => JSON.parse(file))
-    .then((json) => Object.values(json))
-    .then((values) => {
-      values.forEach((value: any) => {
-        store.set(value.hash || 0, value)
-      })
-    })
-    .then(() => {
-      store.delete(0)
-    })
-}
+export const bungieDamageTypeDefinition = new Map<
+  number,
+  BungieDamageTypeDefinition
+>()
 
 const loadDestinyInventoryItemDefinition = (): Promise<void> =>
   readFile('DestinyInventoryItemDefinition.json', bungieInventoryItemDefinition)
@@ -85,6 +90,9 @@ const loadDestinyInventoryBucketDefinition = (): Promise<void> =>
     bungieInventoryBucketDefinition
   )
 
+const loadDestinyDamageTypeDefinition = (): Promise<void> =>
+  readFile('DestinyDamageTypeDefinition.json', bungieDamageTypeDefinition)
+
 export const loadDestinyData = (): Promise<unknown> =>
   Promise.all([
     loadDestinyClassDefinition(),
@@ -95,4 +103,5 @@ export const loadDestinyData = (): Promise<unknown> =>
     loadDestinySocketTypeDefinition(),
     loadDestinyStatDefinition(),
     loadDestinyInventoryBucketDefinition(),
+    loadDestinyDamageTypeDefinition(),
   ]).then(() => console.log('All data read to memory.'))

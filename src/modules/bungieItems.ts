@@ -1,4 +1,7 @@
-import { bungieInventoryBucketDefinition } from '../database'
+import {
+  bungieDamageTypeDefinition,
+  bungieInventoryBucketDefinition,
+} from '../database'
 import { BungieProfileResponse } from './bungieApi'
 import { Character, parseCharacters } from './bungieCharacter'
 import { getPerk, Perk } from './bungiePerks'
@@ -100,6 +103,7 @@ export interface Item {
   equipped?: boolean
   index: number
   damageType: number
+  damageTypeName: string
   powerLevel: number
   bucket: string
   stats: Stat[]
@@ -160,6 +164,10 @@ const prepareItems = (
       // and not "equipped" it means that it's actually equipped
       const isEquipped = weapon.storedAt !== '0' && weapon.equipped !== true
 
+      const damageType = bungieDamageTypeDefinition.get(
+        itemInfo.damageTypeHash || 0
+      )
+
       return {
         itemHash: weapon.itemHash,
         itemInstanceId: weapon.itemInstanceId,
@@ -173,6 +181,7 @@ const prepareItems = (
         equipped: isEquipped,
         index: weaponInfo.index,
         damageType: itemInfo.damageType || 0,
+        damageTypeName: damageType?.displayProperties?.name || '',
         powerLevel: itemInfo.primaryStat?.value || 0,
         bucket: weapon.bucket,
         stats: itemStats,
