@@ -22,7 +22,7 @@
     "webpack:client": "webpack --mode production --config-name='client'",
     "webpack:server": "webpack --mode production --config-name='server'",
     "generatetypes": "npx openapi-typescript https://raw.githubusercontent.com/Bungie-net/api/master/openapi.json --output src/modules/bungieTypes.ts",
-    "updatedata": "ts-node ts-node src/modules/updateData.ts",
+    "updatedata": "./node_modules/ts-node/dist/bin.js src/modules/updateData.ts",
     "deploy": "NODE_ENV=development yarn install && yarn build && yarn updatedata"
   },
   "engines": {
