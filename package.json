@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "run-s webpack:client webpack:server",
+    "build": "run-s touch webpack:client webpack:server",
     "lint:json": "prettier --check '**/*.json'",
     "lint:ts": "prettier --check --parser typescript --config package.json '**/*.ts*'",
     "lint:tsc": "tsc --noEmit --project .",
@@ -17,7 +17,7 @@
     "s": "run-p touch watch:build nodemon",
     "test": "jest",
     "test:coverage": "jest --coverage=true",
-    "touch": "mkdir -p build && touch build/server.js",
+    "touch": "mkdir -p build && touch build/server.js && echo '{}' > ./manifest.json",
     "watch:build": "webpack --mode development --watch",
     "webpack:client": "webpack --mode production --config-name='client'",
     "webpack:server": "webpack --mode production --config-name='server'",
