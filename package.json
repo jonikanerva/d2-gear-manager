@@ -17,12 +17,11 @@
     "s": "run-p touch watch:build nodemon",
     "test": "jest",
     "test:coverage": "jest --coverage=true",
-    "touch": "mkdir -p build && touch build/server.js && echo '{}' > ./manifest.json",
+    "touch": "mkdir -p build data && touch build/server.js && echo '{}' > ./manifest.json",
     "watch:build": "webpack --mode development --watch",
     "webpack:client": "webpack --mode production --config-name='client'",
     "webpack:server": "webpack --mode production --config-name='server'",
     "generatetypes": "npx openapi-typescript https://raw.githubusercontent.com/Bungie-net/api/master/openapi.json --output src/modules/bungieTypes.ts",
-    "updatedata": "./node_modules/ts-node/dist/bin.js src/modules/updateData.ts",
     "deploy": "NODE_ENV=development yarn install && yarn build && yarn updatedata"
   },
   "engines": {
@@ -71,7 +70,6 @@
     "source-map-loader": "^2.0.1",
     "ts-jest": "^26.5.4",
     "ts-loader": "^8.0.0",
-    "ts-node": "^9.1.1",
     "typescript": "^4.2.4",
     "webpack": "^5.31.2",
     "webpack-cli": "^4.5.0",
