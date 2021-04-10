@@ -109,6 +109,15 @@ const serverConfig = {
         },
       },
       {
+        test: /\.png$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name]-[contenthash].[ext]',
+          outputPath: 'public/',
+          publicPath: '.',
+        },
+      },
+      {
         enforce: 'pre',
         test: /\.js$/,
         exclude: /node_modules/,

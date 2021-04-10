@@ -4,6 +4,7 @@ import { StaticRouter as Router } from 'react-router-dom'
 
 import manifestJson from '../../../manifest.json'
 import App from '../../components/App'
+import favicon from '../../images/favicon.png'
 
 const manifest: Record<string, string> = manifestJson
 
@@ -14,6 +15,13 @@ const html = (url: string): string => `<!DOCTYPE html>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link rel="stylesheet" href="/${manifest['main.css'].replace(/^auto/, '')}" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="shortcut icon" href="/${favicon}" />
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="144x144"
+    href="./favicon.png"
+  />
 </head>
 <body>
   <div id="root">${renderToString(
