@@ -35,18 +35,16 @@ const storePath = ({
 const callInSequence = <T>(list: T[], fnc: (arg: T) => Promise<void>) =>
   list.reduce((memo, item) => memo.then(() => fnc(item)), Promise.resolve())
 
-const isProduction = (): boolean => config.environment === 'production'
-
 export const downloadData = (): Promise<void> =>
-  isProduction()
-    ? getManifest()
-        .then((manifest) => manifest?.jsonWorldComponentContentPaths?.en || {})
-        .then((paths) =>
-          Object.entries(paths).map(([key, value]) => ({
-            name: key,
-            path: value,
-          }))
-        )
-        .then((paths) => callInSequence(paths, storePath))
-        .catch((error) => console.error(error))
-    : Promise.resolve()
+  getManifest()
+    .then((manifest) => manifest?.jsonWorldComponentContentPaths?.en || {})
+    .then((paths) =>
+      Object.entries(paths).map(([key, value]) => ({
+        name: key,
+        path: value,
+      }))
+    )
+    .then((paths) => callInSequence(paths, storePath))
+    .catch((error) => console.error(error))
+
+downloadData()

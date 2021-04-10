@@ -22,7 +22,8 @@
     "webpack:client": "webpack --mode production --config-name='client'",
     "webpack:server": "webpack --mode production --config-name='server'",
     "generatetypes": "npx openapi-typescript https://raw.githubusercontent.com/Bungie-net/api/master/openapi.json --output src/modules/bungieTypes.ts",
-    "deploy": "NODE_ENV=development yarn install && yarn build"
+    "updatedata": "ts-node ts-node src/modules/updateData.ts",
+    "deploy": "NODE_ENV=development yarn install && yarn build && yarn updatedata"
   },
   "engines": {
     "node": "14.16.1"
@@ -70,6 +71,7 @@
     "source-map-loader": "^2.0.1",
     "ts-jest": "^26.5.4",
     "ts-loader": "^8.0.0",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.4",
     "webpack": "^5.31.2",
     "webpack-cli": "^4.5.0",
