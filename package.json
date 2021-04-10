@@ -21,7 +21,8 @@
     "watch:build": "webpack --mode development --watch",
     "webpack:client": "webpack --mode production --config-name='client'",
     "webpack:server": "webpack --mode production --config-name='server'",
-    "generatetypes": "npx openapi-typescript https://raw.githubusercontent.com/Bungie-net/api/master/openapi.json --output src/modules/bungieTypes.ts"
+    "generatetypes": "npx openapi-typescript https://raw.githubusercontent.com/Bungie-net/api/master/openapi.json --output src/modules/bungieTypes.ts",
+    "deploy": "NODE_ENV=development yarn install && yarn build"
   },
   "engines": {
     "node": "14.16.1"
