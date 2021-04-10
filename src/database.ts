@@ -2,6 +2,7 @@ import { promises as fs } from 'fs'
 import path from 'path'
 
 import { components } from './modules/bungieTypes'
+import { downloadData } from './modules/updateData'
 
 const readFile = (filename: string, store: Map<any, any>): Promise<void> => {
   console.log('Reading', filename)
@@ -102,15 +103,19 @@ const loadDestinyEquipmentSlotDefinition = (): Promise<void> =>
   readFile('DestinyEquipmentSlotDefinition.json', bungieEquipmentSlotDefinition)
 
 export const loadDestinyData = (): Promise<unknown> =>
-  Promise.all([
-    loadDestinyClassDefinition(),
-    loadDestinyInventoryItemDefinition(),
-    loadDestinyPlugSetDefinition(),
-    loadDestinyRaceDefinition(),
-    loadDestinySocketCategoryDefinition(),
-    loadDestinySocketTypeDefinition(),
-    loadDestinyStatDefinition(),
-    loadDestinyInventoryBucketDefinition(),
-    loadDestinyDamageTypeDefinition(),
-    loadDestinyEquipmentSlotDefinition(),
-  ]).then(() => console.log('All data read to memory.'))
+  downloadData()
+    .then(() =>
+      Promise.all([
+        loadDestinyClassDefinition(),
+        loadDestinyInventoryItemDefinition(),
+        loadDestinyPlugSetDefinition(),
+        loadDestinyRaceDefinition(),
+        loadDestinySocketCategoryDefinition(),
+        loadDestinySocketTypeDefinition(),
+        loadDestinyStatDefinition(),
+        loadDestinyInventoryBucketDefinition(),
+        loadDestinyDamageTypeDefinition(),
+        loadDestinyEquipmentSlotDefinition(),
+      ])
+    )
+    .then(() => console.log('All data read to memory.'))
