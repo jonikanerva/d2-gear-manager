@@ -24,6 +24,7 @@ export const createExpress = (): Application => {
   app.get('/auth', getRoot)
 
   app.get('/api/auth', getAuth)
+  app.get('/api/health', (_req, res, _next) => res.status(200).send())
   app.post('/api/profile', postProfile)
   app.post('/api/transfer', postTransfer)
 
