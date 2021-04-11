@@ -6,6 +6,8 @@ import Weapon from './Weapon'
 import styles from './Weapons.css'
 
 type Event = React.ChangeEvent<HTMLInputElement>
+type MouseEvent = React.MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>
+
 interface WeaponProps {
   profile: Profile
   membershipType: number
@@ -35,6 +37,20 @@ const Weapons: React.FC<WeaponProps> = ({
   const handleSearchOnChange = debounce((event: Event) => {
     setSearchTerm(event.target.value)
   }, 200)
+
+  const clearSearch = (event: MouseEvent) => {
+    event.preventDefault()
+
+    const searchField = document.getElementById(
+      'searchField'
+    ) as HTMLInputElement
+
+    if (searchField !== null) {
+      searchField.value = ''
+    }
+
+    setSearchTerm('')
+  }
 
   const searchWeapons = useCallback(
     (searchTerm: string): Item[] =>
@@ -70,15 +86,25 @@ const Weapons: React.FC<WeaponProps> = ({
   return (
     <div>
       <div className={styles.heading}>Weapons</div>
-      <input
-        autoCapitalize="off"
-        autoComplete="off"
-        autoCorrect="off"
-        spellCheck="false"
-        type="text"
-        className={styles.searchBox}
-        onChange={handleSearchOnChange}
-      />
+      <div className={styles.searchArea}>
+        <input
+          id="searchField"
+          autoCapitalize="off"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
+          type="text"
+          className={styles.searchBox}
+          onChange={handleSearchOnChange}
+        />
+        <a
+          href="/"
+          className={styles.clearButton}
+          onClick={(e) => clearSearch(e)}
+        >
+          ❌
+        </a>
+      </div>
       <div className={styles.weapons}>
         {items.map((item) => {
           const key = `${item.itemHash}${item.itemInstanceId}`

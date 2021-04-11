@@ -16,3 +16,13 @@
   color: black;
   padding-bottom: 3px;
 }
+
+.searchArea {
+  width: 100%;
+}
+
+.clearButton {
+  margin-left: -30px;
+  text-decoration: none;
+  color: black;
+}
