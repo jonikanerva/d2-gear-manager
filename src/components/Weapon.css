@@ -24,9 +24,36 @@
 }
 
 .perks {
-  padding-top: 8px;
+  margin-top: 8px;
   color: white;
   font-size: 10px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+}
+
+.perkCategory {
+  width: 50px;
+  margin-right: 5px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.perkIcon {
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 3px;
+}
+
+.perkImage {
+  height: 40px;
+  width: 40px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .transferButtons {

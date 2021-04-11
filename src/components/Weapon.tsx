@@ -119,7 +119,27 @@ const Weapon: React.FC<WeaponProps> = ({
         ))}
       </div>
       <div className={styles.perks}>
-        Perks:{' '}
+        {item.perks.flatMap((perks, keyi) => (
+          <div className={styles.perkCategory} key={keyi}>
+            {perks.perks.map((perk, keyy) => (
+              <div
+                className={styles.perkIcon}
+                key={`${keyi}${keyy}`}
+                style={
+                  perk.isEquipped ? { background: 'rgb(79, 79, 185)' } : {}
+                }
+              >
+                <img
+                  alt={perk.name}
+                  className={styles.perkImage}
+                  src={`https://www.bungie.net${perk.icon}`}
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className={styles.perks}>
         {item.perks
           .flatMap((perks) => perks.perks.map(({ name }) => name))
           .join(', ')}
