@@ -119,7 +119,10 @@ const Weapon: React.FC<WeaponProps> = ({
         ))}
       </div>
       <div className={styles.perks}>
-        Perks: {item.equippedPerks.map((perk) => perk.name).join(', ')}
+        Perks:{' '}
+        {item.perks
+          .flatMap((perks) => perks.perks.map(({ name }) => name))
+          .join(', ')}
       </div>
       <div className={styles.transferButtons}>
         {transferring !== '' ? (

@@ -4,7 +4,7 @@ import {
 } from '../database'
 import { BungieProfileResponse } from './bungieApi'
 import { Character, parseCharacters } from './bungieCharacter'
-import { getPerk, Perk } from './bungiePerks'
+import { PerkSet, preparePerks } from './bungiePerks'
 import { getStat, Stat } from './bungieStats'
 import { components } from './bungieTypes'
 import { getWeapon, isWeapon } from './bungieWeapons'
@@ -109,8 +109,7 @@ export interface Item {
   powerLevel: number
   bucket: string
   stats: Stat[]
-  equippedPerks: Perk[]
-  availablePerks: Perk[]
+  perks: PerkSet[]
 }
 
 const prepareItems = (
@@ -145,22 +144,18 @@ const prepareItems = (
       )
 
       // all available perks for current random weapon
-      const reusablePlugs = Object.values(
+      const availablePerks: number[] = Object.values(
         itemComponents.reusablePlugs?.data?.[`${itemInstanceId}`]?.plugs || {}
-      ).flatMap((value) =>
-        value.map(
-          ({ plugItemHash }): Perk => ({ ...getPerk(plugItemHash || 0) })
-        )
-      )
+      ).flatMap((value) => value.map(({ plugItemHash }) => plugItemHash || 0))
 
       // equipped perks for current random weapon
-      const itemSockets =
+      const equippedPerks =
         itemComponents?.sockets?.data?.[`${itemInstanceId}`]?.sockets
           ?.filter(
             (socket) =>
               socket.isVisible === true && socket.plugHash !== undefined
           )
-          .map(({ plugHash }): Perk => ({ ...getPerk(plugHash || 0) })) || []
+          .map(({ plugHash }) => plugHash || 0) || []
 
       // equipped means in character inventory, if item is not in vault
       // and not "equipped" it means that it's actually equipped
@@ -189,8 +184,7 @@ const prepareItems = (
         powerLevel: itemInfo.primaryStat?.value || 0,
         bucket: weapon.bucket,
         stats: itemStats,
-        equippedPerks: itemSockets,
-        availablePerks: reusablePlugs,
+        perks: preparePerks(availablePerks, equippedPerks),
       }
     })
 
