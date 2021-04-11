@@ -5,8 +5,12 @@ import { StaticRouter as Router } from 'react-router-dom'
 import manifestJson from '../../../manifest.json'
 import App from '../../components/App'
 import favicon from '../../images/favicon.png'
+import { config } from '../config'
 
 const manifest: Record<string, string> = manifestJson
+const appConfig = {
+  clientId: config.bungieClientId,
+}
 
 const html = (url: string): string => `<!DOCTYPE html>
 <html lang="en">
@@ -20,8 +24,11 @@ const html = (url: string): string => `<!DOCTYPE html>
   <link
     rel="apple-touch-icon-precomposed"
     sizes="144x144"
-    href="./favicon.png"
+    href="/${favicon}"
   />
+  <script type="application/json" id="appConfig">${JSON.stringify(
+    appConfig
+  )}</script>
 </head>
 <body>
   <div id="root">${renderToString(

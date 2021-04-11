@@ -113,8 +113,8 @@ const serverConfig = {
         loader: 'file-loader',
         options: {
           name: '[name]-[contenthash].[ext]',
-          outputPath: 'public/',
-          publicPath: '.',
+          outputPath: 'public/images',
+          publicPath: 'images/',
         },
       },
       {
