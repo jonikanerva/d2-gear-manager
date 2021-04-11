@@ -6,6 +6,7 @@ export interface Perk {
   icon: string
   index: number
   category: string
+  isEquipped: boolean
 }
 
 export interface PerkSet {
@@ -22,6 +23,7 @@ export const getPerk = (hash: number): Perk => {
     icon: perk?.displayProperties?.icon || '',
     index: perk?.index || 0,
     category: perk?.plug?.plugCategoryIdentifier || '',
+    isEquipped: false,
   }
 }
 
